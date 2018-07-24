@@ -117,6 +117,20 @@ matrix:
         - LIBCXX_BUILD=1 LIBCXX_SANITIZER=Thread
         - ENABLE_SANITIZER=1
         - EXTRA_FLAGS="-stdlib=libc++ -g -O2 -fno-omit-frame-pointer -fsanitize=thread -fno-sanitize-recover=all"
+    - compiler: gcc
+      env: CONAN=True
+      language: python
+      python: "3.6"
+      before_script:
+        - pip install -U pip
+      before_install:
+        - pip --version
+      install:
+        - pip install conan
+      script:
+        - conan create . google/testing --build
+      after_success:
+        - exit 0
     - os: osx
       osx_image: xcode8.3
       compiler: clang
