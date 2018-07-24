@@ -4,6 +4,7 @@
 * Ensure the project builds and tests run (sanity check only, obviously)
     * `parallel -j0 exec ::: test/*_test` can help ensure everything at least
       passes
+* Update the version string in conanfile.py
 * Prepare release notes
     * `git log $(git describe --abbrev=0 --tags)..HEAD` gives you the list of
       commits between the last annotated tag and HEAD
