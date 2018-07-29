@@ -3,7 +3,6 @@ from conans import ConanFile, CMake, tools
 
 class GoogleBenchmarkConan(ConanFile):
     name = "benchmark"
-    version = "1.4.1"
     description = "A microbenchmark support library."
     url = "https://github.com/google/benchmark"
     homepage = "https://github.com/google/benchmark"
