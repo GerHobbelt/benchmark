@@ -1,5 +1,5 @@
 from conans import ConanFile, CMake, tools
-
+import shutil
 
 class GoogleBenchmarkConan(ConanFile):
     name = "benchmark"
@@ -21,6 +21,12 @@ class GoogleBenchmarkConan(ConanFile):
     generators = "cmake"
 
     build_subfolder = "."
+
+    def source(self):
+        """Wrap the original CMake file to call conan_basic_setup
+        """
+        shutil.move("CMakeLists.txt", "CMakeListsOriginal.txt")
+        shutil.move(os.path.join("conan", "CMakeLists.txt"), "CMakeLists.txt")
 
     def config_options(self):
         if self.settings.os == 'Windows':
