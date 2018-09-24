@@ -15,26 +15,38 @@ conan-linux: &conan-linux
   python: "3.6"
   services:
     - docker
-  install:
+  before_install:
     - |
         CONAN_VERSION=${TRAVIS_TAG//v};
         export CONAN_REFERENCE=${CONAN_USERNAME}/${CONAN_VERSION};
         export CONAN_CHANNEL="stable";
+  install:
     - ./conan/travis/install.sh
   script:
     - ./conan/travis/build.sh
+   # the following are dummies to overwrite default build steps
+  before_script:
+    - true
+  after_success:
+    - true
   if: tag IS present
 conan-osx: &conan-osx
   os: osx
   language: generic
-  install:
+  before_install:
     - |
         CONAN_VERSION=${TRAVIS_TAG//v};
         export CONAN_REFERENCE=${CONAN_USERNAME}/${CONAN_VERSION};
         export CONAN_CHANNEL="stable";
+  install:
     - ./conan/travis/install.sh
   script:
     - ./conan/travis/build.sh
+   # the following are dummies to overwrite default build steps
+  before_script:
+    - true
+  after_success:
+    - true
   if: tag IS present
 
 matrix:
