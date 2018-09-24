@@ -63,10 +63,6 @@ class GoogleBenchmarkConan(ConanFile):
             self.build_requires("gtest/1.8.0@bincrafters/stable")
 
     def build(self):
-        tools.replace_in_file("CMakeLists.txt", "project (benchmark)", '''project (benchmark)
-        include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-        conan_basic_setup()''')
-
         cmake = self._configure_cmake()
         cmake.build()
 
