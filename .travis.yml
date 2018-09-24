@@ -204,6 +204,7 @@ matrix:
             conan user -p "${CONAN_PASSWORD}" -r benchmark "${CONAN_LOGIN_USERNAME}";
             conan upload --force -r ${CONAN_PACKAGE_NAME} --retry 3 --retry-wait 10 --confirm "${CONAN_FULL_REFERENCE}";
           fi;
+      if: NOT tag IS present
     - <<: *conan-linux
       env: CONAN_GCC_VERSIONS=4.9 CONAN_DOCKER_IMAGE=lasote/conangcc49
     - <<: *conan-linux
