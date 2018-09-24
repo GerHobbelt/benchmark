@@ -18,7 +18,7 @@ conan-linux: &conan-linux
   before_install:
     - |
         CONAN_VERSION=${TRAVIS_TAG//v};
-        export CONAN_REFERENCE=${CONAN_USERNAME}/${CONAN_VERSION};
+        export CONAN_REFERENCE=${CONAN_PACKAGE_NAME}/${CONAN_VERSION};
         export CONAN_CHANNEL="stable";
   install:
     - ./conan/travis/install.sh
@@ -36,7 +36,7 @@ conan-osx: &conan-osx
   before_install:
     - |
         CONAN_VERSION=${TRAVIS_TAG//v};
-        export CONAN_REFERENCE=${CONAN_USERNAME}/${CONAN_VERSION};
+        export CONAN_REFERENCE=${CONAN_PACKAGE_NAME}/${CONAN_VERSION};
         export CONAN_CHANNEL="stable";
   install:
     - ./conan/travis/install.sh
