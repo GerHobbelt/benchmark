@@ -57,7 +57,7 @@ environment:
       CONAN_BUILD_TYPES: Debug
 
 matrix:
-  except:
+  exclude:
     # We only need one time all Conan jobs, so exclude all but one configuration from matrix expanding
     - conan: true
       configuration: Debug
