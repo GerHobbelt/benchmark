@@ -11,6 +11,7 @@ env:
 conan-buildsteps: &conan-buildsteps
   before_install:
     # use this step if you desire to manipulate CONAN_REFERENCE or other values
+    # dummy to overwrite default build steps
     - true
   install:
     - ./conan/travis/install.sh

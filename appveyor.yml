@@ -10,7 +10,6 @@ environment:
   global:
     CONAN_USERNAME: "google"
     CONAN_PACKAGE_NAME: "benchmark"
-    CONAN_SHARED: "None" # Disable Windows shared as long as it is broken, remove var entirely to enable
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       CONAN_VISUAL_VERSIONS: 14

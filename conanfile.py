@@ -35,6 +35,7 @@ class GoogleBenchmarkConan(ConanFile):
             if self.settings.compiler == "Visual Studio" and float(self.settings.compiler.version.value) <= 12:
                 raise Exception("{} {} does not support Visual Studio <= 12".format(self.name, self.version))
             del self.options.fPIC
+            del self.options.shared
 
     def configure(self):
         if self.settings.os == "Windows" and self.options.shared:
