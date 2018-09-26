@@ -47,6 +47,7 @@ environment:
 
 matrix:
   exclude:
+    # We only need one time all Conan jobs, so exclude all but one configuration from matrix expanding
     - CONAN: true
       configuration: Debug
   fast_finish: true
