@@ -35,10 +35,10 @@ if __name__ == "__main__":
                                  stable_branch_pattern=stable_branch_pattern,
                                  upload_only_when_stable=upload_only_when_stable,
                                  test_folder=test_folder)
+    builder.add_common_builds(pure_c=False)
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
         if disable_shared == "True" and options["shared"]:
              filtered_builds.append([settings, options, env_vars, build_requires])
     builder.builds = filtered_builds
-    builder.add_common_builds(pure_c=False)
     builder.run()
