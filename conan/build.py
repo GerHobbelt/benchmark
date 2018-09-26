@@ -17,7 +17,7 @@ if __name__ == "__main__":
     tag_version = os.getenv("CONAN_PACKAGE_VERSION", os.getenv("TRAVIS_TAG"))
     package_version = tag_version.replace("v", "")
     package_name = os.getenv("CONAN_PACKAGE_NAME", "SET-CONAN_PACKAGE_NAME-OR-CONAN_REFERENCE")
-    default_reference = "{}/{}".format(package_version, package_name)
+    default_reference = "{}/{}".format(package_name, package_version)
     reference = os.getenv("CONAN_REFERENCE", default_reference)
     channel = os.getenv("CONAN_CHANNEL", "stable")
     upload = os.getenv("CONAN_UPLOAD")
