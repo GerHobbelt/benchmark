@@ -8,6 +8,7 @@ class GoogleBenchmarkConan(ConanFile):
     description = "A microbenchmark support library."
     url = "https://github.com/google/benchmark"
     homepage = "https://github.com/google/benchmark"
+    author = "Google Inc."
     license = "Apache-2.0"
     settings = "arch", "build_type", "compiler", "os"
     options = {
