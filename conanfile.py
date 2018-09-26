@@ -1,4 +1,6 @@
 from conans import ConanFile, CMake, tools
+import shutil
+import os
 
 
 class GoogleBenchmarkConan(ConanFile):
@@ -22,12 +24,20 @@ class GoogleBenchmarkConan(ConanFile):
 
     build_subfolder = "."
 
+    def source(self):
+        """Wrap the original CMake file to call conan_basic_setup
+        """
+        shutil.move("CMakeLists.txt", "CMakeListsOriginal.txt")
+        shutil.move(os.path.join("conan", "CMakeLists.txt"), "CMakeLists.txt")
+
     def config_options(self):
-        if self.settings.os == 'Windows':
+        if self.settings.os == "Windows":
+            if self.settings.compiler == "Visual Studio" and float(self.settings.compiler.version.value) <= 12:
+                raise Exception("{} {} does not support Visual Studio <= 12".format(self.name, self.version))
             del self.options.fPIC
 
     def configure(self):
-        if self.settings.os == 'Windows' and self.options.shared:
+        if self.settings.os == "Windows" and self.options.shared:
             raise Exception("Windows shared builds are not supported right now, see issue #639")
 
         if self.options.enable_testing == False:
@@ -55,10 +65,6 @@ class GoogleBenchmarkConan(ConanFile):
             self.build_requires("gtest/1.8.0@bincrafters/stable")
 
     def build(self):
-        tools.replace_in_file("CMakeLists.txt", "project (benchmark)", '''project (benchmark)
-        include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-        conan_basic_setup()''')
-
         cmake = self._configure_cmake()
         cmake.build()
 
