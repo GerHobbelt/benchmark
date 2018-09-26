@@ -25,6 +25,8 @@ if __name__ == "__main__":
     test_folder = os.getenv("CPT_TEST_FOLDER", os.path.join("conan", "test_package"))
     upload_only_when_stable = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE", True)
 
+    disable_shared = os.getenv("CONAN_DISABLE_SHARED_BUILD", "False")
+
     builder = ConanMultiPackager(username=username,
                                  reference=reference,
                                  channel=channel,
@@ -33,5 +35,10 @@ if __name__ == "__main__":
                                  stable_branch_pattern=stable_branch_pattern,
                                  upload_only_when_stable=upload_only_when_stable,
                                  test_folder=test_folder)
+    filtered_builds = []
+    for settings, options, env_vars, build_requires, reference in builder.items:
+        if disable_shared == "True" and options.shared:
+             filtered_builds.append([settings, options, env_vars, build_requires])
+    builder.builds = filtered_builds
     builder.add_common_builds(pure_c=False)
     builder.run()

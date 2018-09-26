@@ -10,6 +10,7 @@ environment:
   global:
     CONAN_USERNAME: "google"
     CONAN_PACKAGE_NAME: "benchmark"
+    CONAN_DISABLE_SHARED_BUILD: "True" # Remove this line altogether when shared Win builds are fixed
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       CONAN_VISUAL_VERSIONS: 14
