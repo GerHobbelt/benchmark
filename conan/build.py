@@ -24,6 +24,7 @@ if __name__ == "__main__":
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", r"v\d+\.\d+\.\d+.*")
     test_folder = os.getenv("CPT_TEST_FOLDER", os.path.join("conan", "test_package"))
     upload_only_when_stable = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE", True)
+    shared_option_name = os.getenv("CONAN_SHARED", "shared")
 
     builder = ConanMultiPackager(username=username,
                                  reference=reference,
@@ -33,5 +34,5 @@ if __name__ == "__main__":
                                  stable_branch_pattern=stable_branch_pattern,
                                  upload_only_when_stable=upload_only_when_stable,
                                  test_folder=test_folder)
-    builder.add_common_builds(pure_c=False)
+    builder.add_common_builds(pure_c=False, shared_option_name=shared_option_name)
     builder.run()
