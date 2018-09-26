@@ -41,7 +41,7 @@ if __name__ == "__main__":
     builder.add_common_builds(pure_c=False)
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-        if disable_shared == "True" and options["{}:shared".format(package_name)]:
+        if disable_shared == "True" and not options["{}:shared".format(package_name)]:
              filtered_builds.append([settings, options, env_vars, build_requires])
     builder.builds = filtered_builds
     builder.run()
