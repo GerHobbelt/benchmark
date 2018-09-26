@@ -5,13 +5,9 @@ import os
 
 def set_appveyor_environment():
     if os.getenv("APPVEYOR") is not None:
-        compiler_version = os.getenv("CMAKE_VS_VERSION").split(" ")[0].replace('"', '')
-        os.environ["CONAN_VISUAL_VERSIONS"] = compiler_version
-        os.environ["CONAN_STABLE_BRANCH_PATTERN"] = "master"
-        ci_platform = os.getenv("Platform").replace('"', '')
-        ci_platform = "x86" if ci_platform == "x86" else "x86_64"
-        os.environ["CONAN_ARCHS"] = ci_platform
-        os.environ["CONAN_BUILD_TYPES"] = os.getenv("Configuration").replace('"', '')
+        os.environ["CONAN_STABLE_BRANCH_PATTERN"] = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "master")
+        os.environ["CONAN_ARCHS"] = os.getenv("CONAN_ARCHS", "x86,x86_64")
+        os.environ["CONAN_BUILD_TYPES"] = os.getenv("CONAN_BUILD_TYPES", "Release,Debug").replace('"', '')
 
 if __name__ == "__main__":
     login_username = os.getenv("CONAN_LOGIN_USERNAME")
