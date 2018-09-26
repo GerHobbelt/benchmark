@@ -47,14 +47,15 @@ environment:
 
 matrix:
   exclude:
-    - conan: true
+    - CONAN: true
+      configuration: Debug
   fast_finish: true
 
 for:
 -
   matrix:
     except:
-      - conan: true
+      - CONAN: true
 
   install:
     # git bash conflicts with MinGW makefiles
@@ -80,7 +81,7 @@ for:
 -
   matrix:
     only:
-      - conan: true
+      - CONAN: true
   skip_non_tags: true
 
   install:
