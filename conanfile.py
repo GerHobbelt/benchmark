@@ -31,11 +31,13 @@ class GoogleBenchmarkConan(ConanFile):
         shutil.move(os.path.join("conan", "CMakeLists.txt"), "CMakeLists.txt")
 
     def config_options(self):
-        if self.settings.os == 'Windows':
+        if self.settings.os == "Windows":
+            if self.settings.compiler == "Visual Studio" and float(self.settings.compiler.version.value) <= 12:
+                raise Exception("{} {} does not support Visual Studio <= 12".format(self.name, self.version))
             del self.options.fPIC
 
     def configure(self):
-        if self.settings.os == 'Windows' and self.options.shared:
+        if self.settings.os == "Windows" and self.options.shared:
             raise Exception("Windows shared builds are not supported right now, see issue #639")
 
         if self.options.enable_testing == False:

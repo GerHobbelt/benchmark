@@ -10,10 +10,8 @@ env:
 
 conan-buildsteps: &conan-buildsteps
   before_install:
-    - |
-        CONAN_VERSION=${TRAVIS_TAG//v};
-        export CONAN_REFERENCE=${CONAN_PACKAGE_NAME}/${CONAN_VERSION};
-        export CONAN_CHANNEL="stable";
+    # use this step if you desire to manipulate CONAN_REFERENCE or other values
+    - true
   install:
     - ./conan/travis/install.sh
   script:

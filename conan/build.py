@@ -8,17 +8,22 @@ def set_appveyor_environment():
         os.environ["CONAN_STABLE_BRANCH_PATTERN"] = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "master")
         os.environ["CONAN_ARCHS"] = os.getenv("CONAN_ARCHS", "x86,x86_64")
         os.environ["CONAN_BUILD_TYPES"] = os.getenv("CONAN_BUILD_TYPES", "Release,Debug").replace('"', '')
+        os.environ["CONAN_PACKAGE_VERSION"] = os.getenv("CONAN_PACKAGE_VERSION", os.getenv("APPVEYOR_REPO_TAG_NAME"))
 
 if __name__ == "__main__":
+    set_appveyor_environment()
     login_username = os.getenv("CONAN_LOGIN_USERNAME")
     username = os.getenv("CONAN_USERNAME")
-    reference = os.getenv("CONAN_REFERENCE")
-    channel = os.getenv("CONAN_CHANNEL")
+    tag_version = os.getenv("CONAN_PACKAGE_VERSION", os.getenv("TRAVIS_TAG"))
+    package_version = tag_version.oldstr.replace("v", "")
+    package_name = os.getenv("CONAN_PACKAGE_NAME", "SET-CONAN_PACKAGE_NAME-OR-CONAN_REFERENCE")
+    default_reference = "{}/{}".format(package_version, package_name)
+    reference = os.getenv("CONAN_REFERENCE", default_reference)
+    channel = os.getenv("CONAN_CHANNEL", "stable")
     upload = os.getenv("CONAN_UPLOAD")
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", r"v\d+\.\d+\.\d+.*")
     test_folder = os.getenv("CPT_TEST_FOLDER", os.path.join("conan", "test_package"))
     upload_only_when_stable = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE", True)
-    set_appveyor_environment()
 
     builder = ConanMultiPackager(username=username,
                                  reference=reference,
