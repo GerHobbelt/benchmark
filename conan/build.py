@@ -16,9 +16,10 @@ if __name__ == "__main__":
     username = os.getenv("CONAN_USERNAME")
     tag_version = os.getenv("CONAN_PACKAGE_VERSION", os.getenv("TRAVIS_TAG"))
     package_version = tag_version.replace("v", "")
-    package_name = os.getenv("CONAN_PACKAGE_NAME", "SET-CONAN_PACKAGE_NAME-OR-CONAN_REFERENCE")
-    default_reference = "{}/{}".format(package_name, package_version)
-    reference = os.getenv("CONAN_REFERENCE", default_reference)
+    package_name_unset = "SET-CONAN_PACKAGE_NAME-OR-CONAN_REFERENCE"
+    package_name = os.getenv("CONAN_PACKAGE_NAME", package_name_unset)
+    reference = "{}/{}".format(package_name, package_version)
+    # reference = os.getenv("CONAN_REFERENCE", default_reference)
     channel = os.getenv("CONAN_CHANNEL", "stable")
     upload = os.getenv("CONAN_UPLOAD")
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", r"v\d+\.\d+\.\d+.*")
@@ -26,6 +27,8 @@ if __name__ == "__main__":
     upload_only_when_stable = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE", True)
 
     disable_shared = os.getenv("CONAN_DISABLE_SHARED_BUILD", "False")
+    if disable_shared == "True" and package_name == package_name_unset:
+        raise Exception("CONAN_DISABLE_SHARED_BUILD: True is only supported when you define CONAN_PACKAGE_NAME")
 
     builder = ConanMultiPackager(username=username,
                                  reference=reference,
@@ -38,7 +41,7 @@ if __name__ == "__main__":
     builder.add_common_builds(pure_c=False)
     filtered_builds = []
     for settings, options, env_vars, build_requires, reference in builder.items:
-        if disable_shared == "True" and options["shared"]:
+        if disable_shared == "True" and options[package_name]["shared"]:
              filtered_builds.append([settings, options, env_vars, build_requires])
     builder.builds = filtered_builds
     builder.run()
