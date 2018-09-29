@@ -82,7 +82,7 @@ class GoogleBenchmarkConan(ConanFile):
         elif self.settings.os == "Windows":
             self.cpp_info.libs.append("shlwapi")
         elif self.settings.os == "SunOS":
-            self.cpp.info.libs.append("kstat")
+            self.cpp_info.libs.append("kstat")
 
     def package_id(self):
         # Development options don't change the binary output
