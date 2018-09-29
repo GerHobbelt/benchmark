@@ -14,12 +14,12 @@ class GoogleBenchmarkConan(ConanFile):
     options = {
         "shared": [True, False],
         "fPIC": [True, False],
-        "enable_exceptions": [True, False],
         "enable_lto": [True, False],
+        "enable_exceptions": [True, False],
         "enable_testing": [True, False],
         "enable_gtest_tests": [True, False]
     }
-    default_options = "shared=False", "fPIC=True", "enable_exceptions=True", "enable_lto=False", "enable_testing=False", "enable_gtest_tests=False"
+    default_options = "shared=False", "fPIC=True", "enable_lto=False", "enable_exceptions=True", "enable_testing=False", "enable_gtest_tests=False"
     exports_sources = ["*"]
     generators = "cmake"
 
@@ -83,3 +83,11 @@ class GoogleBenchmarkConan(ConanFile):
             self.cpp_info.libs.append("shlwapi")
         elif self.settings.os == "SunOS":
             self.cpp.info.libs.append("kstat")
+
+    def package_id(self):
+        # Development options don't change the binary output
+        # from a user point of view; overwrite id information
+        # so that the package_id is the same
+        # if only the development options are different
+        self.info.options.enable_testing = "dev-option"
+        self.info.options.enable_gtest_tests = "dev-option"
