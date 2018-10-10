@@ -1,4 +1,5 @@
 from conans import ConanFile, CMake, tools
+from conans.errors import ConanInvalidConfiguration
 import shutil
 import os
 
@@ -32,7 +33,7 @@ class GoogleBenchmarkConan(ConanFile):
     def config_options(self):
         if self.settings.os == "Windows":
             if self.settings.compiler == "Visual Studio" and float(self.settings.compiler.version.value) <= 12:
-                raise Exception("{} {} does not support Visual Studio <= 12".format(self.name, self.version))
+                raise ConanInvalidConfiguration("{} {} does not support Visual Studio <= 12".format(self.name, self.version))
             del self.options.fPIC
 
         if tools.get_env("CONAN_RUN_TESTS") != "True":
@@ -42,7 +43,7 @@ class GoogleBenchmarkConan(ConanFile):
 
     def configure(self):
         if self.settings.os == "Windows" and self.options.shared:
-            raise Exception("Windows shared builds are not supported right now, see issue #639")
+            raise ConanInvalidConfiguration("Windows shared builds are not supported right now, see issue #639")
 
     def _configure_cmake(self):
         cmake = CMake(self)
