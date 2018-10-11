@@ -19,11 +19,11 @@ class GoogleBenchmarkConan(ConanFile):
         "enable_exceptions": [True, False],
         "enable_gtest_tests": [True, False]
     }
-    default_options = "shared=False", "fPIC=True", "enable_lto=False", "enable_exceptions=True", "enable_gtest_tests=False"
+    default_options = {"shared": False, "fPIC": True, "enable_lto": False, "enable_exceptions": True, "enable_gtest_tests": False}
     exports_sources = ["*"]
     generators = "cmake"
 
-    build_subfolder = "."
+    _build_subfolder = "."
 
     def source(self):
         # Wrap the original CMake file to call conan_basic_setup
@@ -65,7 +65,7 @@ class GoogleBenchmarkConan(ConanFile):
         else:
             cmake.definitions["BENCHMARK_USE_LIBCXX"] = "OFF"
 
-        cmake.configure(build_folder=self.build_subfolder)
+        cmake.configure(build_folder=self._build_subfolder)
         return cmake
 
     def build_requirements(self):
