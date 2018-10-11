@@ -14,9 +14,9 @@ conan-buildsteps: &conan-buildsteps
     # dummy to overwrite default build steps
     - true
   install:
-    - ./conan/travis/install.sh
+    - ./conan/ci/install.sh
   script:
-    - ./conan/travis/build.sh
+    - ./conan/ci/build.sh
    # the following are dummies to overwrite default build steps
   before_script:
     - true
