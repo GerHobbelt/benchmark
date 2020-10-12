@@ -109,4 +109,10 @@ if (BENCHMARK_ENABLE_INSTALL)
       EXPORT "${targets_export_name}"
       NAMESPACE "${namespace}"
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+      
+  install(
+      DIRECTORY "${PROJECT_SOURCE_DIR}/tools" 
+      TYPE DATA
+      PATTERN "*.py"
+      PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
 endif()
