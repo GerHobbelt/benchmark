@@ -4,6 +4,11 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
+#if !defined(BUILD_MONOLITHIC)
+
 #if __cplusplus >= 201103L
 #error C++11 or greater detected. Should be C++03.
 #endif
@@ -12,7 +17,9 @@
 #error C++11 or greater detected by the library. BENCHMARK_HAS_CXX11 is defined.
 #endif
 
-void BM_empty(benchmark::State& state) {
+#endif
+
+static void BM_empty(benchmark::State& state) {
   while (state.KeepRunning()) {
     volatile benchmark::IterationCount x = state.iterations();
     ((void)x);
@@ -22,7 +29,7 @@ BENCHMARK(BM_empty);
 
 // The new C++11 interface for args/ranges requires initializer list support.
 // Therefore we provide the old interface to support C++03.
-void BM_old_arg_range_interface(benchmark::State& state) {
+static void BM_old_arg_range_interface(benchmark::State& state) {
   assert((state.range(0) == 1 && state.range(1) == 2) ||
          (state.range(0) == 5 && state.range(1) == 6));
   while (state.KeepRunning()) {
@@ -53,10 +60,16 @@ BENCHMARK_TEMPLATE1_F(BM_Fixture, BM_template2, int)(benchmark::State& state) {
   BM_empty(state);
 }
 
-void BM_counters(benchmark::State& state) {
+static void BM_counters(benchmark::State& state) {
   BM_empty(state);
   state.counters["Foo"] = 2;
 }
 BENCHMARK(BM_counters);
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_cxx03_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

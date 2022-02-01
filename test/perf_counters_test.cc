@@ -5,6 +5,9 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
+
 static void BM_Simple(benchmark::State& state) {
   for (auto _ : state) {
     benchmark::DoNotOptimize(state.iterations());
@@ -19,9 +22,16 @@ static void CheckSimple(Results const& e) {
 }
 CHECK_BENCHMARK_RESULTS("BM_Simple", &CheckSimple);
 
-int main(int argc, char* argv[]) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_perf_counters_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   if (!benchmark::internal::PerfCounters::kSupported) {
     return 0;
   }
   RunOutputTests(argc, argv);
+  return 0;
 }

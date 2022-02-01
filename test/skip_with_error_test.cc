@@ -6,6 +6,9 @@
 #include "../src/check.h"  // NOTE: check.h is for internal use only!
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
@@ -176,7 +179,13 @@ ADD_CASES("BM_error_while_paused", {{"/1/threads:1", true, "error message"},
                                     {"/2/threads:4", false, ""},
                                     {"/2/threads:8", false, ""}});
 
-int main(int argc, char* argv[]) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_skip_with_error_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 
   TestReporter test_reporter;

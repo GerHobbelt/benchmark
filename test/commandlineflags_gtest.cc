@@ -9,7 +9,7 @@ namespace benchmark {
 namespace {
 
 #if defined(BENCHMARK_OS_WINDOWS)
-int setenv(const char* name, const char* value, int overwrite) {
+static int setenv(const char* name, const char* value, int overwrite) {
   if (!overwrite) {
     // NOTE: getenv_s is far superior but not available under mingw.
     char* env_value = getenv(name);
@@ -20,7 +20,7 @@ int setenv(const char* name, const char* value, int overwrite) {
   return _putenv_s(name, value);
 }
 
-int unsetenv(const char* name) { return _putenv_s(name, ""); }
+static int unsetenv(const char* name) { return _putenv_s(name, ""); }
 
 #endif  // BENCHMARK_OS_WINDOWS
 

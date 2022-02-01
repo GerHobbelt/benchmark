@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if !defined(BUILDING_LIBGBENCHMARK)
+
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_main(cnt, arr)
+#endif
+
 BENCHMARK_MAIN();
+
+#endif

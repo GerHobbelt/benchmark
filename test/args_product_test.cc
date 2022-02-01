@@ -5,6 +5,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 class ArgsProductFixture : public ::benchmark::Fixture {
  public:
   ArgsProductFixture()
@@ -73,5 +76,11 @@ BENCHMARK_REGISTER_F(ArgsProductFixture, Empty)
     ->Args({0, 100, 2000, 30000})
     ->ArgsProduct({{1, 2}, {15}, {3, 7, 10}, {8, 9}})
     ->Args({4, 5, 6, 11});
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_args_product_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

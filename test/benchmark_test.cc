@@ -18,6 +18,9 @@
 #include <utility>
 #include <vector>
 
+#include "monolithic_examples.h"
+
+
 #if defined(__GNUC__)
 #define BENCHMARK_NOINLINE __attribute__((noinline))
 #else
@@ -243,5 +246,11 @@ static void BM_DenseThreadRanges(benchmark::State& st) {
 BENCHMARK(BM_DenseThreadRanges)->Arg(1)->DenseThreadRange(1, 3);
 BENCHMARK(BM_DenseThreadRanges)->Arg(2)->DenseThreadRange(1, 4, 2);
 BENCHMARK(BM_DenseThreadRanges)->Arg(3)->DenseThreadRange(5, 14, 3);
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_bench_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

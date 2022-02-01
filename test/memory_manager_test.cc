@@ -4,6 +4,11 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
+
+namespace gbench_mm_test {
+
 class TestMemoryManager : public benchmark::MemoryManager {
   void Start() BENCHMARK_OVERRIDE {}
   void Stop(Result* result) BENCHMARK_OVERRIDE {
@@ -12,7 +17,7 @@ class TestMemoryManager : public benchmark::MemoryManager {
   }
 };
 
-void BM_empty(benchmark::State& state) {
+static void BM_empty(benchmark::State& state) {
   for (auto _ : state) {
     benchmark::DoNotOptimize(state.iterations());
   }
@@ -37,10 +42,20 @@ ADD_CASES(TC_JSONOut, {{"\"name\": \"BM_empty\",$"},
                        {"}", MR_Next}});
 ADD_CASES(TC_CSVOut, {{"^\"BM_empty\",%csv_report$"}});
 
-int main(int argc, char* argv[]) {
+}
+
+using namespace gbench_mm_test;
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_memory_manager_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   std::unique_ptr<benchmark::MemoryManager> mm(new TestMemoryManager());
 
   benchmark::RegisterMemoryManager(mm.get());
   RunOutputTests(argc, argv);
   benchmark::RegisterMemoryManager(nullptr);
+  return 0;
 }

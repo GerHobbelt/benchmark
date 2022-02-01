@@ -2,6 +2,11 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
+
+namespace gbench_repetitions_test {
+
 // ========================================================================= //
 // ------------------------ Testing Basic Output --------------------------- //
 // ========================================================================= //
@@ -211,4 +216,14 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_ImplicitRepetitions_stddev\",%csv_report$"}});
 // --------------------------- TEST CASES END ------------------------------ //
 // ========================================================================= //
 
-int main(int argc, char* argv[]) { RunOutputTests(argc, argv); }
+}
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_repetitions_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
+	RunOutputTests(argc, argv);
+	return 0;
+}

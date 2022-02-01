@@ -2,6 +2,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 namespace {
 #if defined(__GNUC__)
 std::uint64_t double_up(const std::uint64_t x) __attribute__((const));
@@ -26,7 +29,13 @@ struct BitRef {
   BitRef(int i, unsigned char& b) : index(i), byte(b) {}
 };
 
-int main(int, char*[]) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_do_not_optimize_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   // this test verifies compilation of DoNotOptimize() for some types
 
   char buffer8[8] = "";
@@ -50,4 +59,5 @@ int main(int, char*[]) {
   benchmark::DoNotOptimize(BitRef::Make());
   BitRef lval = BitRef::Make();
   benchmark::DoNotOptimize(lval);
+  return 0;
 }

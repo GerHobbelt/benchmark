@@ -5,6 +5,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 class MultipleRangesFixture : public ::benchmark::Fixture {
  public:
   MultipleRangesFixture()
@@ -92,5 +95,11 @@ static void BM_MultipleRanges(benchmark::State& st) {
   }
 }
 BENCHMARK(BM_MultipleRanges)->Ranges({{5, 5}, {6, 6}});
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_multiple_ranges_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

@@ -549,7 +549,7 @@ void PrintUsageAndExit() {
   exit(0);
 }
 
-void ParseCommandLineFlags(int* argc, char** argv) {
+void ParseCommandLineFlags(int* argc, const char** argv) {
   using namespace benchmark;
   BenchmarkReporter::Context::executable_name =
       (argc && *argc > 0) ? argv[0] : "unknown";
@@ -608,14 +608,14 @@ int InitializeStreams() {
 
 }  // end namespace internal
 
-void Initialize(int* argc, char** argv) {
+void Initialize(int* argc, const char** argv) {
   internal::ParseCommandLineFlags(argc, argv);
   internal::LogLevel() = FLAGS_v;
 }
 
 void Shutdown() { delete internal::global_context; }
 
-bool ReportUnrecognizedArguments(int argc, char** argv) {
+bool ReportUnrecognizedArguments(int argc, const char** argv) {
   for (int i = 1; i < argc; ++i) {
     fprintf(stderr, "%s: error: unrecognized command-line flag: %s\n", argv[0],
             argv[i]);

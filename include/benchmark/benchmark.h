@@ -283,12 +283,12 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 namespace benchmark {
 class BenchmarkReporter;
 
-void Initialize(int* argc, char** argv);
+void Initialize(int* argc, const char** argv);
 void Shutdown();
 
 // Report to stdout all arguments in 'argv' as unrecognized except the first.
 // Returns true there is at least on unrecognized argument (i.e. 'argc' > 1).
-bool ReportUnrecognizedArguments(int argc, char** argv);
+bool ReportUnrecognizedArguments(int argc, const char** argv);
 
 // Returns the current value of --benchmark_filter.
 std::string GetBenchmarkFilter();
@@ -1440,14 +1440,14 @@ class Fixture : public internal::Benchmark {
 
 // Helper macro to create a main routine in a test that runs the benchmarks
 #define BENCHMARK_MAIN()                                                \
-  int main(int argc, char** argv) {                                     \
+  int main(int argc, const char** argv) {                               \
     ::benchmark::Initialize(&argc, argv);                               \
     if (::benchmark::ReportUnrecognizedArguments(argc, argv)) return 1; \
     ::benchmark::RunSpecifiedBenchmarks();                              \
     ::benchmark::Shutdown();                                            \
     return 0;                                                           \
   }                                                                     \
-  int main(int, char**)
+  int main(int, const char**)
 
 // ------------------------------------------------------
 // Benchmark Reporters

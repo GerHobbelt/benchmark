@@ -8,6 +8,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 // Test that Setup() and Teardown() are called exactly once
 // for each benchmark run (single-threaded).
 namespace single {
@@ -127,7 +130,13 @@ BENCHMARK(BM_WithRep)
     ->Iterations(100)
     ->Repetitions(4);
 
-int main(int argc, char** argv) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_setup_teardown_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 
   size_t ret = benchmark::RunSpecifiedBenchmarks(".");

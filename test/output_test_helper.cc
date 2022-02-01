@@ -385,7 +385,7 @@ int SetSubstitutions(
 // CSVReporter but don't want to trigger -Werror=-Wdeprecated-declarations
 BENCHMARK_DISABLE_DEPRECATED_WARNING
 
-void RunOutputTests(int argc, char* argv[]) {
+void RunOutputTests(int argc, const char* argv[]) {
   using internal::GetTestCaseList;
   benchmark::Initialize(&argc, argv);
   auto options = benchmark::internal::GetOutputOptions(/*force_no_color*/ true);
@@ -491,8 +491,8 @@ static std::string GetTempFileName() {
   std::abort();
 }
 
-std::string GetFileReporterOutput(int argc, char* argv[]) {
-  std::vector<char*> new_argv(argv, argv + argc);
+std::string GetFileReporterOutput(int argc, const char* argv[]) {
+  std::vector<const char*> new_argv(argv, argv + argc);
   assert(static_cast<decltype(new_argv)::size_type>(argc) == new_argv.size());
 
   std::string tmp_file_name = GetTempFileName();

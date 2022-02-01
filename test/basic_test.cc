@@ -1,9 +1,12 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 #define BASIC_BENCHMARK_TEST(x) BENCHMARK(x)->Arg(8)->Arg(512)->Arg(8192)
 
-void BM_empty(benchmark::State& state) {
+static void BM_empty(benchmark::State& state) {
   for (auto _ : state) {
     benchmark::DoNotOptimize(state.iterations());
   }
@@ -11,7 +14,7 @@ void BM_empty(benchmark::State& state) {
 BENCHMARK(BM_empty);
 BENCHMARK(BM_empty)->ThreadPerCpu();
 
-void BM_spin_empty(benchmark::State& state) {
+static void BM_spin_empty(benchmark::State& state) {
   for (auto _ : state) {
     for (auto x = 0; x < state.range(0); ++x) {
       benchmark::DoNotOptimize(x);
@@ -21,7 +24,7 @@ void BM_spin_empty(benchmark::State& state) {
 BASIC_BENCHMARK_TEST(BM_spin_empty);
 BASIC_BENCHMARK_TEST(BM_spin_empty)->ThreadPerCpu();
 
-void BM_spin_pause_before(benchmark::State& state) {
+static void BM_spin_pause_before(benchmark::State& state) {
   for (auto i = 0; i < state.range(0); ++i) {
     benchmark::DoNotOptimize(i);
   }
@@ -34,7 +37,7 @@ void BM_spin_pause_before(benchmark::State& state) {
 BASIC_BENCHMARK_TEST(BM_spin_pause_before);
 BASIC_BENCHMARK_TEST(BM_spin_pause_before)->ThreadPerCpu();
 
-void BM_spin_pause_during(benchmark::State& state) {
+static void BM_spin_pause_during(benchmark::State& state) {
   for (auto _ : state) {
     state.PauseTiming();
     for (auto i = 0; i < state.range(0); ++i) {
@@ -49,7 +52,7 @@ void BM_spin_pause_during(benchmark::State& state) {
 BASIC_BENCHMARK_TEST(BM_spin_pause_during);
 BASIC_BENCHMARK_TEST(BM_spin_pause_during)->ThreadPerCpu();
 
-void BM_pause_during(benchmark::State& state) {
+static void BM_pause_during(benchmark::State& state) {
   for (auto _ : state) {
     state.PauseTiming();
     state.ResumeTiming();
@@ -60,7 +63,7 @@ BENCHMARK(BM_pause_during)->ThreadPerCpu();
 BENCHMARK(BM_pause_during)->UseRealTime();
 BENCHMARK(BM_pause_during)->UseRealTime()->ThreadPerCpu();
 
-void BM_spin_pause_after(benchmark::State& state) {
+static void BM_spin_pause_after(benchmark::State& state) {
   for (auto _ : state) {
     for (auto i = 0; i < state.range(0); ++i) {
       benchmark::DoNotOptimize(i);
@@ -73,7 +76,7 @@ void BM_spin_pause_after(benchmark::State& state) {
 BASIC_BENCHMARK_TEST(BM_spin_pause_after);
 BASIC_BENCHMARK_TEST(BM_spin_pause_after)->ThreadPerCpu();
 
-void BM_spin_pause_before_and_after(benchmark::State& state) {
+static void BM_spin_pause_before_and_after(benchmark::State& state) {
   for (auto i = 0; i < state.range(0); ++i) {
     benchmark::DoNotOptimize(i);
   }
@@ -89,14 +92,14 @@ void BM_spin_pause_before_and_after(benchmark::State& state) {
 BASIC_BENCHMARK_TEST(BM_spin_pause_before_and_after);
 BASIC_BENCHMARK_TEST(BM_spin_pause_before_and_after)->ThreadPerCpu();
 
-void BM_empty_stop_start(benchmark::State& state) {
+static void BM_empty_stop_start(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
 BENCHMARK(BM_empty_stop_start);
 BENCHMARK(BM_empty_stop_start)->ThreadPerCpu();
 
-void BM_KeepRunning(benchmark::State& state) {
+static void BM_KeepRunning(benchmark::State& state) {
   benchmark::IterationCount iter_count = 0;
   assert(iter_count == state.iterations());
   while (state.KeepRunning()) {
@@ -106,7 +109,7 @@ void BM_KeepRunning(benchmark::State& state) {
 }
 BENCHMARK(BM_KeepRunning);
 
-void BM_KeepRunningBatch(benchmark::State& state) {
+static void BM_KeepRunningBatch(benchmark::State& state) {
   // Choose a batch size >1000 to skip the typical runs with iteration
   // targets of 10, 100 and 1000.  If these are not actually skipped the
   // bug would be detectable as consecutive runs with the same iteration
@@ -132,7 +135,7 @@ void BM_KeepRunningBatch(benchmark::State& state) {
 // cause this test to fail if set > 1.
 BENCHMARK(BM_KeepRunningBatch)->Repetitions(1);
 
-void BM_RangedFor(benchmark::State& state) {
+static void BM_RangedFor(benchmark::State& state) {
   benchmark::IterationCount iter_count = 0;
   for (auto _ : state) {
     ++iter_count;
@@ -175,5 +178,11 @@ static_assert(
                      benchmark::State::StateIterator>::value_type,
                  typename benchmark::State::StateIterator::value_type>::value,
     "");
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_basic_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

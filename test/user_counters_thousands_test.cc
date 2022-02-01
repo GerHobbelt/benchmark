@@ -4,6 +4,11 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
+
+namespace gbench_user_counters_thousands_test {
+
 // ========================================================================= //
 // ------------------------ Thousands Customisation ------------------------ //
 // ========================================================================= //
@@ -183,4 +188,14 @@ CHECK_BENCHMARK_RESULTS("BM_Counters_Thousands", &CheckThousands);
 // --------------------------- TEST CASES END ------------------------------ //
 // ========================================================================= //
 
-int main(int argc, char* argv[]) { RunOutputTests(argc, argv); }
+}
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_user_counters_thousands_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
+	RunOutputTests(argc, argv);
+	return 0;
+}

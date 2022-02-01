@@ -3,6 +3,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 namespace {
 
 std::map<int, int> ConstructRandomMap(int size) {
@@ -53,5 +56,11 @@ BENCHMARK_DEFINE_F(MapFixture, Lookup)(benchmark::State& state) {
   state.SetItemsProcessed(state.iterations() * size);
 }
 BENCHMARK_REGISTER_F(MapFixture, Lookup)->Range(1 << 3, 1 << 12);
+
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_map_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

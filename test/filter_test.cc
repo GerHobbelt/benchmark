@@ -10,6 +10,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
@@ -70,7 +73,13 @@ static void BM_FooBa(benchmark::State& state) {
 }
 BENCHMARK(BM_FooBa);
 
-int main(int argc, char** argv) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_filter_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   bool list_only = false;
   for (int i = 0; i < argc; ++i)
     list_only |= std::string(argv[i]).find("--benchmark_list_tests") !=

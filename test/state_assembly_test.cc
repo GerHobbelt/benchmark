@@ -14,6 +14,8 @@ extern "C" {
 
 using benchmark::State;
 
+#if !defined(BUILD_MONOLITHIC)
+
 // CHECK-LABEL: test_for_auto_loop:
 extern "C" int test_for_auto_loop() {
   State& S = GetState();
@@ -66,3 +68,5 @@ extern "C" int test_while_loop() {
   // CHECK: ret
   return 101;
 }
+
+#endif

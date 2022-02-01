@@ -13,6 +13,9 @@
 #include "../src/check.h"
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 #if defined(__GNUC__) && !defined(__EXCEPTIONS)
 #define TEST_HAS_NO_EXCEPTIONS
 #endif
@@ -73,8 +76,15 @@ void BM_diagnostic_test_keep_running(benchmark::State& state) {
 }
 BENCHMARK(BM_diagnostic_test_keep_running);
 
-int main(int argc, char* argv[]) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_diagnostics_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   benchmark::internal::GetAbortHandler() = &TestHandler;
   benchmark::Initialize(&argc, argv);
   benchmark::RunSpecifiedBenchmarks();
+  return 0;
 }

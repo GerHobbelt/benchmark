@@ -8,6 +8,9 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
+
 static const std::chrono::duration<double, std::milli> time_frame(50);
 static const double time_frame_in_sec(
     std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1, 1>>>(
@@ -182,4 +185,13 @@ BENCHMARK(BM_MainThreadAndWorkerThread)
 // ---------------------------- TEST CASES END ----------------------------- //
 // ========================================================================= //
 
-int main(int argc, char* argv[]) { RunOutputTests(argc, argv); }
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_internal_threading_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
+	RunOutputTests(argc, argv);
+	return 0;
+}

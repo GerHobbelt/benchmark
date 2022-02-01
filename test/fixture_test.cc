@@ -4,6 +4,11 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
+namespace gbench_fxture_test {
+
 #define FIXTURE_BECHMARK_NAME MyFixture
 
 class FIXTURE_BECHMARK_NAME : public ::benchmark::Fixture {
@@ -47,5 +52,12 @@ BENCHMARK_DEFINE_F(FIXTURE_BECHMARK_NAME, Bar)(benchmark::State& st) {
 }
 BENCHMARK_REGISTER_F(FIXTURE_BECHMARK_NAME, Bar)->Arg(42);
 BENCHMARK_REGISTER_F(FIXTURE_BECHMARK_NAME, Bar)->Arg(42)->ThreadPerCpu();
+
+}
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_future_test_main(cnt, arr)
+#endif
 
 BENCHMARK_MAIN();

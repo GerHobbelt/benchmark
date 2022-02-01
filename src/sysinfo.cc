@@ -529,7 +529,7 @@ int GetNumCPUs() {
   BENCHMARK_UNREACHABLE();
 }
 
-double GetCPUCyclesPerSecond(CPUInfo::Scaling scaling) {
+static double GetCPUCyclesPerSecond(CPUInfo::Scaling scaling) {
   // Currently, scaling is only used on linux path here,
   // suppress diagnostics about it being unused on other paths.
   (void)scaling;

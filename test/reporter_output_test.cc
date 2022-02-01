@@ -6,6 +6,11 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
+
+namespace gbench_reporter_output_test {
+
 // ========================================================================= //
 // ---------------------- Testing Prologue Output -------------------------- //
 // ========================================================================= //
@@ -57,14 +62,14 @@ static int AddContextCases() {
   AddCases(TC_JSONOut, {{"\"load_avg\": \\[(%float,?){0,3}],$", MR_Next}});
   return 0;
 }
-int dummy_register = AddContextCases();
+static int dummy_register = AddContextCases();
 ADD_CASES(TC_CSVOut, {{"%csv_header"}});
 
 // ========================================================================= //
 // ------------------------ Testing Basic Output --------------------------- //
 // ========================================================================= //
 
-void BM_basic(benchmark::State& state) {
+static void BM_basic(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -90,7 +95,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_basic\",%csv_report$"}});
 // ------------------------ Testing Bytes per Second Output ---------------- //
 // ========================================================================= //
 
-void BM_bytes_per_second(benchmark::State& state) {
+static void BM_bytes_per_second(benchmark::State& state) {
   for (auto _ : state) {
     // This test requires a non-zero CPU time to avoid divide-by-zero
     benchmark::DoNotOptimize(state.iterations());
@@ -121,7 +126,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_bytes_per_second\",%csv_bytes_report$"}});
 // ------------------------ Testing Items per Second Output ---------------- //
 // ========================================================================= //
 
-void BM_items_per_second(benchmark::State& state) {
+static void BM_items_per_second(benchmark::State& state) {
   for (auto _ : state) {
     // This test requires a non-zero CPU time to avoid divide-by-zero
     benchmark::DoNotOptimize(state.iterations());
@@ -152,7 +157,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_items_per_second\",%csv_items_report$"}});
 // ------------------------ Testing Label Output --------------------------- //
 // ========================================================================= //
 
-void BM_label(benchmark::State& state) {
+static void BM_label(benchmark::State& state) {
   for (auto _ : state) {
   }
   state.SetLabel("some label");
@@ -181,7 +186,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_label\",%csv_label_report_begin\"some "
 // ------------------------ Testing Time Label Output ---------------------- //
 // ========================================================================= //
 
-void BM_time_label_nanosecond(benchmark::State& state) {
+static void BM_time_label_nanosecond(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -204,7 +209,7 @@ ADD_CASES(TC_JSONOut,
            {"}", MR_Next}});
 ADD_CASES(TC_CSVOut, {{"^\"BM_time_label_nanosecond\",%csv_report$"}});
 
-void BM_time_label_microsecond(benchmark::State& state) {
+static void BM_time_label_microsecond(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -227,7 +232,7 @@ ADD_CASES(TC_JSONOut,
            {"}", MR_Next}});
 ADD_CASES(TC_CSVOut, {{"^\"BM_time_label_microsecond\",%csv_us_report$"}});
 
-void BM_time_label_millisecond(benchmark::State& state) {
+static void BM_time_label_millisecond(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -250,7 +255,7 @@ ADD_CASES(TC_JSONOut,
            {"}", MR_Next}});
 ADD_CASES(TC_CSVOut, {{"^\"BM_time_label_millisecond\",%csv_ms_report$"}});
 
-void BM_time_label_second(benchmark::State& state) {
+static void BM_time_label_second(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -276,7 +281,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_time_label_second\",%csv_s_report$"}});
 // ------------------------ Testing Error Output --------------------------- //
 // ========================================================================= //
 
-void BM_error(benchmark::State& state) {
+static void BM_error(benchmark::State& state) {
   state.SkipWithError("message");
   for (auto _ : state) {
   }
@@ -301,7 +306,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_error\",,,,,,,,true,\"message\"$"}});
 // //
 // ========================================================================= //
 
-void BM_no_arg_name(benchmark::State& state) {
+static void BM_no_arg_name(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -321,7 +326,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_no_arg_name/3\",%csv_report$"}});
 // ------------------------ Testing Arg Name Output ----------------------- //
 // ========================================================================= //
 
-void BM_arg_name(benchmark::State& state) {
+static void BM_arg_name(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -341,7 +346,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_arg_name/first:3\",%csv_report$"}});
 // ------------------------ Testing Arg Names Output ----------------------- //
 // ========================================================================= //
 
-void BM_arg_names(benchmark::State& state) {
+static void BM_arg_names(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -363,7 +368,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_arg_names/first:2/5/third:4\",%csv_report$"}});
 // ------------------------ Testing Name Output ---------------------------- //
 // ========================================================================= //
 
-void BM_name(benchmark::State& state) {
+static void BM_name(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -389,7 +394,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_custom_name\",%csv_report$"}});
 // ------------------------ Testing Big Args Output ------------------------ //
 // ========================================================================= //
 
-void BM_BigArgs(benchmark::State& state) {
+static void BM_BigArgs(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -401,7 +406,7 @@ ADD_CASES(TC_ConsoleOut, {{"^BM_BigArgs/1073741824 %console_report$"},
 // ----------------------- Testing Complexity Output ----------------------- //
 // ========================================================================= //
 
-void BM_Complexity_O1(benchmark::State& state) {
+static void BM_Complexity_O1(benchmark::State& state) {
   for (auto _ : state) {
     // This test requires a non-zero CPU time to avoid divide-by-zero
     benchmark::DoNotOptimize(state.iterations());
@@ -419,7 +424,7 @@ ADD_CASES(TC_ConsoleOut, {{"^BM_Complexity_O1_BigO %bigOStr %bigOStr[ ]*$"},
 // ========================================================================= //
 
 // Test that non-aggregate data is printed by default
-void BM_Repeat(benchmark::State& state) {
+static void BM_Repeat(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -633,7 +638,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_Repeat/repeats:4\",%csv_report$"},
 
 // Test that a non-repeated test still prints non-aggregate results even when
 // only-aggregate reports have been requested
-void BM_RepeatOnce(benchmark::State& state) {
+static void BM_RepeatOnce(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -650,7 +655,7 @@ ADD_CASES(TC_JSONOut, {{"\"name\": \"BM_RepeatOnce/repeats:1\",$"},
 ADD_CASES(TC_CSVOut, {{"^\"BM_RepeatOnce/repeats:1\",%csv_report$"}});
 
 // Test that non-aggregate data is not reported
-void BM_SummaryRepeat(benchmark::State& state) {
+static void BM_SummaryRepeat(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -701,7 +706,7 @@ ADD_CASES(TC_CSVOut, {{".*BM_SummaryRepeat/repeats:3 ", MR_Not},
 // Test that non-aggregate data is not displayed.
 // NOTE: this test is kinda bad. we are only testing the display output.
 //       But we don't check that the file output still contains everything...
-void BM_SummaryDisplay(benchmark::State& state) {
+static void BM_SummaryDisplay(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -751,7 +756,7 @@ ADD_CASES(TC_CSVOut,
            {"^\"BM_SummaryDisplay/repeats:2_stddev\",%csv_report$"}});
 
 // Test repeats with custom time unit.
-void BM_RepeatTimeUnit(benchmark::State& state) {
+static void BM_RepeatTimeUnit(benchmark::State& state) {
   for (auto _ : state) {
   }
 }
@@ -812,10 +817,10 @@ ADD_CASES(TC_CSVOut,
 // -------------------- Testing user-provided statistics ------------------- //
 // ========================================================================= //
 
-const auto UserStatistics = [](const std::vector<double>& v) {
+static const auto UserStatistics = [](const std::vector<double>& v) {
   return v.back();
 };
-void BM_UserStats(benchmark::State& state) {
+static void BM_UserStats(benchmark::State& state) {
   for (auto _ : state) {
     state.SetIterationTime(150 / 10e8);
   }
@@ -943,10 +948,10 @@ ADD_CASES(
 // ------------- Testing relative standard deviation statistics ------------ //
 // ========================================================================= //
 
-const auto UserPercentStatistics = [](const std::vector<double>&) {
+static const auto UserPercentStatistics = [](const std::vector<double>&) {
   return 1. / 100.;
 };
-void BM_UserPercentStats(benchmark::State& state) {
+static void BM_UserPercentStats(benchmark::State& state) {
   for (auto _ : state) {
     state.SetIterationTime(150 / 10e8);
   }
@@ -1091,7 +1096,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_UserPercentStats/iterations:5/repeats:3/"
 // ------------------------- Testing StrEscape JSON ------------------------ //
 // ========================================================================= //
 #if 0  // enable when csv testing code correctly handles multi-line fields
-void BM_JSON_Format(benchmark::State& state) {
+static void BM_JSON_Format(benchmark::State& state) {
   state.SkipWithError("val\b\f\n\r\t\\\"with\"es,capes");
   for (auto _ : state) {
   }
@@ -1112,7 +1117,7 @@ ADD_CASES(TC_JSONOut, {{"\"name\": \"BM_JSON_Format\",$"},
 // -------------------------- Testing CsvEscape ---------------------------- //
 // ========================================================================= //
 
-void BM_CSV_Format(benchmark::State& state) {
+static void BM_CSV_Format(benchmark::State& state) {
   state.SkipWithError("\"freedom\"");
   for (auto _ : state) {
   }
@@ -1124,4 +1129,14 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_CSV_Format\",,,,,,,,true,\"\"\"freedom\"\"\"$"}});
 // --------------------------- TEST CASES END ------------------------------ //
 // ========================================================================= //
 
-int main(int argc, char* argv[]) { RunOutputTests(argc, argv); }
+}
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_reporter_output_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
+	RunOutputTests(argc, argv);
+	return 0;
+}

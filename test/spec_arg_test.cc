@@ -10,6 +10,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 // Tests that we can override benchmark-spec value from FLAGS_benchmark_filter
 // with argument to RunSpecifiedBenchmarks(...).
 
@@ -54,7 +57,13 @@ static void BM_Chosen(benchmark::State& state) {
 }
 BENCHMARK(BM_Chosen);
 
-int main(int argc, char** argv) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_spec_arg_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   const std::string flag = "BM_NotChosen";
 
   // Verify that argv specify --benchmark_filter=BM_NotChosen.

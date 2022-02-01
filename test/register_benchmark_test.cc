@@ -6,6 +6,9 @@
 #include "../src/check.h"  // NOTE: check.h is for internal use only!
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
@@ -176,9 +179,16 @@ void RunTestTwo() {
   assert(EB == ExpectedResults.end());
 }
 
-int main(int argc, char* argv[]) {
+
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_register_bench_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 
   RunTestOne();
   RunTestTwo();
+  return 0;
 }
