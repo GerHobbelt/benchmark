@@ -24,16 +24,7 @@
 #define main(cnt, arr)      gbenchmark_main(cnt, arr)
 #endif
 
+BENCHMARK_EXPORT int main(int, const char**);
 BENCHMARK_MAIN();
-
-// MSVC does not allow the definition of dllimport. Thus, define it here instead
-// inline in a macro.
-int main(int argc, const char** argv) {
-  ::benchmark::Initialize(&argc, argv);
-  if (::benchmark::ReportUnrecognizedArguments(argc, argv)) return 1;
-  ::benchmark::RunSpecifiedBenchmarks();
-  ::benchmark::Shutdown();
-  return 0;
-}
 
 #endif

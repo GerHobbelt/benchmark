@@ -1,9 +1,6 @@
 licenses(["notice"])
 
-load(
-    "//tools:workspace/generate_export_header.bzl",
-    "generate_export_header",
-)
+load("//:config/generate_export_header.bzl", "generate_export_header")
 
 posix_copts = [
     "-fvisibility=hidden",
@@ -57,6 +54,10 @@ cc_library(
     copts = select({
         ":windows": [],
         "//conditions:default": posix_copts,
+    }),
+    local_defines = select({
+        ":windows": ["benchmark_EXPORTS"],
+        "//conditions:default": [],
     }),
 )
 
