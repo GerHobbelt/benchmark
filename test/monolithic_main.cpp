@@ -12,8 +12,6 @@ extern "C" {
 }
 
 
-#include "monolithic_examples.h"
-
 #define USAGE_NAME   "gbenchtest"
 
 #include "monolithic_main_internal_defs.h"
