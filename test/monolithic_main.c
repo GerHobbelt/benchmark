@@ -4,12 +4,17 @@
 
 
 // for clobber_memory_assembly_test.cc et al:
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 	int ExternInt;
 	int ExternInt2;
 	int ExternInt3;
+
+#ifdef __cplusplus
 }
+#endif
 
 
 #define USAGE_NAME   "gbenchtest"
