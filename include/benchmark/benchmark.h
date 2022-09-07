@@ -220,29 +220,18 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 
 #if defined(__GNUC__) || defined(__clang__)
 #define BENCHMARK_ALWAYS_INLINE __attribute__((always_inline))
-#define BENCHMARK_NOEXCEPT noexcept
-#define BENCHMARK_NOEXCEPT_OP(x) noexcept(x)
 #elif defined(_MSC_VER) && !defined(__clang__)
 #define BENCHMARK_ALWAYS_INLINE __forceinline
-#if _MSC_VER >= 1900
-#define BENCHMARK_NOEXCEPT noexcept
-#define BENCHMARK_NOEXCEPT_OP(x) noexcept(x)
-#else
-#define BENCHMARK_NOEXCEPT
-#define BENCHMARK_NOEXCEPT_OP(x)
-#endif
 #define __func__ __FUNCTION__
 #else
 #define BENCHMARK_ALWAYS_INLINE
-#define BENCHMARK_NOEXCEPT
-#define BENCHMARK_NOEXCEPT_OP(x)
 #endif
 
 #define BENCHMARK_INTERNAL_TOSTRING2(x) #x
 #define BENCHMARK_INTERNAL_TOSTRING(x) BENCHMARK_INTERNAL_TOSTRING2(x)
 
 // clang-format off
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__GNUC__) && !defined(__NVCC__) || defined(__clang__)
 #define BENCHMARK_BUILTIN_EXPECT(x, y) __builtin_expect(x, y)
 #define BENCHMARK_DEPRECATED_MSG(msg) __attribute__((deprecated(msg)))
 #define BENCHMARK_DISABLE_DEPRECATED_WARNING \
@@ -1118,7 +1107,7 @@ class BENCHMARK_EXPORT Benchmark {
   // By default, the CPU time is measured only for the main thread, which may
   // be unrepresentative if the benchmark uses threads internally. If called,
   // the total CPU time spent by all the threads will be measured instead.
-  // By default, the only the main thread CPU time will be measured.
+  // By default, only the main thread CPU time will be measured.
   Benchmark* MeasureProcessCPUTime();
 
   // If a particular benchmark should use the Wall clock instead of the CPU time
