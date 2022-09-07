@@ -291,8 +291,10 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 namespace benchmark {
 class BenchmarkReporter;
 
+BENCHMARK_EXPORT void PrintDefaultHelp();
+
 BENCHMARK_EXPORT void Initialize(int* argc, const char** argv,
-                                 void (*HelperPrinterf)() = NULL);
+                                 void (*HelperPrinterf)() = PrintDefaultHelp);
 BENCHMARK_EXPORT void Shutdown();
 
 // Report to stdout all arguments in 'argv' as unrecognized except the first.
@@ -468,7 +470,7 @@ inline BENCHMARK_ALWAYS_INLINE
     typename std::enable_if<std::is_trivially_copyable<Tp>::value &&
                             (sizeof(Tp) <= sizeof(Tp*))>::type
     DoNotOptimize(Tp const& value) {
-  asm volatile("" : : "r"(value) : "memory");
+  asm volatile("" : : "r,m"(value) : "memory");
 }
 
 template <class Tp>
@@ -484,7 +486,7 @@ inline BENCHMARK_ALWAYS_INLINE
     typename std::enable_if<std::is_trivially_copyable<Tp>::value &&
                             (sizeof(Tp) <= sizeof(Tp*))>::type
     DoNotOptimize(Tp& value) {
-  asm volatile("" : "+r"(value) : : "memory");
+  asm volatile("" : "+m,r"(value) : : "memory");
 }
 
 template <class Tp>

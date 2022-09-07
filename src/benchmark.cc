@@ -178,6 +178,10 @@ State::State(IterationCount max_iters, const std::vector<int64_t>& ranges,
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 #endif
+#if defined(__CUDACC__)
+#pragma nv_diagnostic push
+#pragma nv_diag_suppress 1427
+#endif
   // Offset tests to ensure commonly accessed data is on the first cache line.
   const int cache_line_size = 64;
   static_assert(offsetof(State, error_occurred_) <=
@@ -187,6 +191,9 @@ State::State(IterationCount max_iters, const std::vector<int64_t>& ranges,
 #pragma warning pop
 #elif defined(__GNUC__)
 #pragma GCC diagnostic pop
+#endif
+#if defined(__CUDACC__)
+#pragma nv_diagnostic pop
 #endif
 }
 
@@ -567,28 +574,7 @@ namespace internal {
 void (*HelperPrintf)();
 
 void PrintUsageAndExit() {
-  if (HelperPrintf) {
-    HelperPrintf();
-  } else {
-    fprintf(stdout,
-            "benchmark"
-            " [--benchmark_list_tests={true|false}]\n"
-            "          [--benchmark_filter=<regex>]\n"
-            "          [--benchmark_min_time=<min_time>]\n"
-            "          [--benchmark_min_warmup_time=<min_warmup_time>]\n"
-            "          [--benchmark_repetitions=<num_repetitions>]\n"
-            "          [--benchmark_enable_random_interleaving={true|false}]\n"
-            "          [--benchmark_report_aggregates_only={true|false}]\n"
-            "          [--benchmark_display_aggregates_only={true|false}]\n"
-            "          [--benchmark_format=<console|json|csv>]\n"
-            "          [--benchmark_out=<filename>]\n"
-            "          [--benchmark_out_format=<json|console|csv>]\n"
-            "          [--benchmark_color={auto|true|false}]\n"
-            "          [--benchmark_counters_tabular={true|false}]\n"
-            "          [--benchmark_context=<key>=<value>,...]\n"
-            "          [--benchmark_time_unit={ns|us|ms|s}]\n"
-            "          [--v=<verbosity>]\n");
-  }
+  HelperPrintf();
   exit(0);
 }
 
@@ -669,6 +655,27 @@ int InitializeStreams() {
 }
 
 }  // end namespace internal
+
+void PrintDefaultHelp() {
+  fprintf(stdout,
+          "benchmark"
+          " [--benchmark_list_tests={true|false}]\n"
+          "          [--benchmark_filter=<regex>]\n"
+          "          [--benchmark_min_time=<min_time>]\n"
+          "          [--benchmark_min_warmup_time=<min_warmup_time>]\n"
+          "          [--benchmark_repetitions=<num_repetitions>]\n"
+          "          [--benchmark_enable_random_interleaving={true|false}]\n"
+          "          [--benchmark_report_aggregates_only={true|false}]\n"
+          "          [--benchmark_display_aggregates_only={true|false}]\n"
+          "          [--benchmark_format=<console|json|csv>]\n"
+          "          [--benchmark_out=<filename>]\n"
+          "          [--benchmark_out_format=<json|console|csv>]\n"
+          "          [--benchmark_color={auto|true|false}]\n"
+          "          [--benchmark_counters_tabular={true|false}]\n"
+          "          [--benchmark_context=<key>=<value>,...]\n"
+          "          [--benchmark_time_unit={ns|us|ms|s}]\n"
+          "          [--v=<verbosity>]\n");
+}
 
 void Initialize(int* argc, const char** argv, void (*HelperPrintf)()) {
   internal::ParseCommandLineFlags(argc, argv);
