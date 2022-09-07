@@ -606,6 +606,27 @@ BENCHMARK_REGISTER_F(MyFixture, BarTest)->Threads(2);
 /* BarTest is now registered */
 ```
 
+The fixture class' `SetUp` and `TearDown` methods are called before and
+after each call to the benchmark function, sharing the same
+`benchmark::State`.  Each benchmark function is given its own instance of
+the fixture object, but this instance is *shared* across multiple calls to
+the function.
+
+For example, given the `MyFixture` example above, the following will occur:
+
+1. A `MyFixure` object is constructed for `FooTest`, call it `foo_fixture`.
+1. A `MyFixure` object is constructed for `BarTest`, call it `bar_fixture`.
+1. Repeatedly:
+   1. Call `foo_fixture->SetUp`
+   1. Call `foo_fixture`'s benchmark function
+   1. Call `foo_fixture->TearDown`
+1. Repeatedly:
+   1. Call `bar_fixture->SetUp`
+   1. Call `bar_fixture`'s benchmark function
+   1. Call `bar_fixture->TearDown`
+1. Delete `foo_fixture`.
+1. Delete `bar_fixture`.
+
 ### Templated Fixtures
 
 Also you can create templated fixture by using the following macros:
