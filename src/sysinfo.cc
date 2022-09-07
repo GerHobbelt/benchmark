@@ -420,7 +420,7 @@ std::string GetSystemName() {
   std::vector<char> converted;
   // Find the length first.
   int len = ::WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, hostname,
-                                  DWCOUNT, &converted[0], 0, 0, 0);
+                                  DWCOUNT, NULL, 0, 0, 0);
   // TODO: Report error from GetLastError()?
   if (len == 0) return std::string("");
   converted.reserve(len + 1);
