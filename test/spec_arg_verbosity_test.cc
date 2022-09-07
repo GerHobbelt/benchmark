@@ -4,6 +4,9 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+
 // Tests that the user specified verbosity level can be get.
 static void BM_Verbosity(benchmark::State& state) {
   for (auto _ : state) {
@@ -11,7 +14,12 @@ static void BM_Verbosity(benchmark::State& state) {
 }
 BENCHMARK(BM_Verbosity);
 
-int main(int argc, char** argv) {
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr)      gbenchmark_spec_arg_verbosity_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   const int32_t flagv = 42;
 
   // Verify that argv specify --v=42.

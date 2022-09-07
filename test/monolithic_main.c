@@ -49,6 +49,7 @@ MONOLITHIC_CMD_TABLE_START()
 	{ "user_counters", {.fa = gbenchmark_user_counters_test_main } },
 	{ "user_counters_tabular", {.fa = gbenchmark_user_counters_tabular_test_main } },
 	{ "user_counters_thousands", {.fa = gbenchmark_user_counters_thousands_test_main } },
+	{ "spec_arg_verbosity", {.fa = gbenchmark_spec_arg_verbosity_test_main } },
 
 	{ "gbenchmark", {.fa = gbenchmark_main } },
 MONOLITHIC_CMD_TABLE_END();

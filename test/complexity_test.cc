@@ -233,6 +233,6 @@ ADD_COMPLEXITY_CASES(complexity_capture_name, complexity_capture_name + "_BigO",
 #endif
 
 int main(int argc, const char** argv) {
-	RunOutputTests(argc, argv);
-	return 0;
+    RunOutputTests(argc, argv);
+    return 0;
 }
