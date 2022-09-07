@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-#include "benchmark/export.h"
+#include "gbenchmark/export.h"
 #include "internal_macros.h"
 
 namespace benchmark {

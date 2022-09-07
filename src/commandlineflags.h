@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-#include "benchmark/export.h"
+#include "gbenchmark/export.h"
 
 // Macro for referencing flags.
 #define FLAG(name) FLAGS_##name

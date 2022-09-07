@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <ostream>
 
-#include "benchmark/export.h"
+#include "gbenchmark/export.h"
 #include "internal_macros.h"
 #include "log.h"
 
