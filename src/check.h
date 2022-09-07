@@ -26,10 +26,14 @@
 #define BENCHMARK_NOEXCEPT_OP(x)
 #endif
 
-#if defined(_WIN32)
+#if !defined(BUILDING_LIBGBENCHMARK) && !defined(BENCHMARK_STATIC_DEFINE)
+#if defined(_WIN32) && !defined(BUILDING_LIBGBENCHMARK)
 #define WEAK_ATTR __declspec(selectany)
 #else
 #define WEAK_ATTR __attribute__((weak))
+#endif
+#else
+#define WEAK_ATTR 
 #endif
 
 namespace benchmark {
