@@ -22,7 +22,7 @@ add_library(benchmark::benchmark ALIAS benchmark)
 set_target_properties(benchmark PROPERTIES
   OUTPUT_NAME "benchmark"
   VERSION ${GENERIC_LIB_VERSION}
-  SOVERSION 2
+  SOVERSION ${GENERIC_LIB_SOVERSION}
 )
 target_include_directories(benchmark PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -64,7 +64,7 @@ add_library(benchmark::benchmark_main ALIAS benchmark_main)
 set_target_properties(benchmark_main PROPERTIES
   OUTPUT_NAME "benchmark_main"
   VERSION ${GENERIC_LIB_VERSION}
-  SOVERSION 2
+  SOVERSION ${GENERIC_LIB_SOVERSION}
   DEFINE_SYMBOL benchmark_EXPORTS
 )
 target_link_libraries(benchmark_main PUBLIC benchmark::benchmark)
