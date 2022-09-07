@@ -323,7 +323,7 @@ ADD_CASES(TC_JSONOut, {{"\"name\": \"BM_no_arg_name/3\",$"},
 ADD_CASES(TC_CSVOut, {{"^\"BM_no_arg_name/3\",%csv_report$"}});
 
 // ========================================================================= //
-// ------------------------ Testing Arg Name Output ----------------------- //
+// ------------------------ Testing Arg Name Output ------------------------ //
 // ========================================================================= //
 
 static void BM_arg_name(benchmark::State& state) {
