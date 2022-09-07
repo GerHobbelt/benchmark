@@ -13,7 +13,7 @@ foreach(p
   endif()
 endforeach()
 
-project (benchmark VERSION 1.6.2 LANGUAGES CXX)
+project (benchmark VERSION 1.7.0 LANGUAGES CXX)
 
 option(BENCHMARK_ENABLE_TESTING "Enable testing of the benchmark library." OFF)
 option(BENCHMARK_ENABLE_EXCEPTIONS "Enable the use of exceptions in the benchmark library." ON)
@@ -130,7 +130,6 @@ include(AddCXXCompilerFlag)
 include(CheckCXXCompilerFlag)
 include(CheckLibraryExists)
 include(CXXFeatureCheck)
-include(GenerateExportHeader)
 
 check_library_exists(rt shm_open "" HAVE_LIB_RT)
 
