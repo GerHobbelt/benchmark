@@ -414,19 +414,19 @@ std::string GetSystemName() {
   TCHAR hostname[COUNT] = {'\0'};
   DWORD DWCOUNT = COUNT;
   if (!GetComputerName(hostname, &DWCOUNT)) return std::string("");
-#ifndef UNICODE
+#if !defined(UNICODE) && !defined(_UNICODE)
   str = std::string(hostname, DWCOUNT);
 #else
-  std::vector<wchar_t> converted;
+  std::vector<char> converted;
   // Find the length first.
-  int len = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, hostname,
-                                  DWCOUNT, converted.begin(), 0);
+  int len = ::WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, hostname,
+                                  DWCOUNT, &converted[0], 0, 0, 0);
   // TODO: Report error from GetLastError()?
   if (len == 0) return std::string("");
   converted.reserve(len + 1);
 
-  len = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, hostname, DWCOUNT,
-                              converted.begin(), converted.size());
+  len = ::WideCharToMultiByte(CP_UTF8, MB_ERR_INVALID_CHARS, hostname, DWCOUNT,
+                              &converted[0], converted.size(), 0, 0);
   // TODO: Report error from GetLastError()?
   if (len == 0) return std::string("");
   str = std::string(converted.data());
@@ -434,7 +434,7 @@ std::string GetSystemName() {
   return str;
 #else  // defined(BENCHMARK_OS_WINDOWS)
 #ifndef HOST_NAME_MAX
-#ifdef BENCHMARK_HAS_SYSCTL  // BSD/Mac Doesnt have HOST_NAME_MAX defined
+#ifdef BENCHMARK_HAS_SYSCTL  // BSD/Mac doesn't have HOST_NAME_MAX defined
 #define HOST_NAME_MAX 64
 #elif defined(BENCHMARK_OS_NACL)
 #define HOST_NAME_MAX 64
