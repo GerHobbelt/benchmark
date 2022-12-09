@@ -13,19 +13,19 @@
 
 // Test that Setup() and Teardown() are called exactly once
 // for each benchmark run (single-threaded).
-namespace single {
+namespace singlethreaded {
 static int setup_call = 0;
 static int teardown_call = 0;
-}  // namespace single
+}  // namespace singlethreaded
 static void DoSetup1(const benchmark::State& state) {
-  ++single::setup_call;
+  ++singlethreaded::setup_call;
 
   // Setup/Teardown should never be called with any thread_idx != 0.
   assert(state.thread_index() == 0);
 }
 
 static void DoTeardown1(const benchmark::State& state) {
-  ++single::teardown_call;
+  ++singlethreaded::teardown_call;
   assert(state.thread_index() == 0);
 }
 
@@ -143,8 +143,8 @@ int main(int argc, const char** argv) {
   assert(ret > 0);
 
   // Setup/Teardown is called once for each arg group (1,3,5,7).
-  assert(single::setup_call == 4);
-  assert(single::teardown_call == 4);
+  assert(singlethreaded::setup_call == 4);
+  assert(singlethreaded::teardown_call == 4);
 
   // 3 group of threads calling this function (3,5,10).
   assert(concurrent::setup_call.load(std::memory_order_relaxed) == 3);
