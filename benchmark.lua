@@ -12,25 +12,12 @@ includedirs {
 }
 
 files {
-  "**.h",
-  "src/benchmark.cc",
-  "src/benchmark_api_internal.cc",
-  "src/benchmark_name.cc",
-  "src/benchmark_register.cc",
-  "src/benchmark_runner.cc",
-  "src/colorprint.cc",
-  "src/commandlineflags.cc",
-  "src/complexity.cc",
-  "src/console_reporter.cc",
-  "src/counter.cc",
-  "src/csv_reporter.cc",
-  "src/json_reporter.cc",
-  "src/reporter.cc",
-  "src/sleep.cc",
-  "src/statistics.cc",
-  "src/string_util.cc",
-  "src/sysinfo.cc",
-  "src/timers.cc",
+  "include/benchmark/**.h",
+  "src/**",
+}
+
+excludes {
+  "src/benchmark_main.cc",
 }
 
 if (_PLATFORM_ANDROID) then
