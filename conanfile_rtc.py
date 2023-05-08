@@ -3,7 +3,7 @@ from conans import ConanFile
 
 class BenchmarkConan(ConanFile):
     name = "benchmark"
-    version = "1.5.0"
+    version = "1.8.0"
     url = "https://github.com/Esri/benchmark/tree/runtimecore"
     license = "https://github.com/Esri/benchmark/blob/runtimecore/LICENSE"
     description = "A library to benchmark code snippets similar to unit tests."
