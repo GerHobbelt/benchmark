@@ -12,44 +12,39 @@ includedirs {
 }
 
 files {
-  "**.h",
-  "src/benchmark.cc",
-  "src/benchmark_api_internal.cc",
-  "src/benchmark_name.cc",
-  "src/benchmark_register.cc",
-  "src/benchmark_runner.cc",
-  "src/colorprint.cc",
-  "src/commandlineflags.cc",
-  "src/complexity.cc",
-  "src/console_reporter.cc",
-  "src/counter.cc",
-  "src/csv_reporter.cc",
-  "src/json_reporter.cc",
-  "src/reporter.cc",
-  "src/sleep.cc",
-  "src/statistics.cc",
-  "src/string_util.cc",
-  "src/sysinfo.cc",
-  "src/timers.cc",
+  "include/benchmark/**.h",
+  "src/**",
 }
 
-if (_PLATFORM_ANDROID) then
+excludes {
+  "src/benchmark_main.cc",
+}
+
+if (_PLATFORM_ANDROID or _PLATFORM_IOS or _PLATFORM_WINUWP) then
+  return
 end
 
-if (_PLATFORM_COCOA) then
-end
-
-if (_PLATFORM_IOS) then
-end
+defines {
+  "BENCHMARK_STATIC_DEFINE",
+  "HAVE_STD_REGEX",
+  "HAVE_STEADY_CLOCK",
+}
 
 if (_PLATFORM_LINUX) then
+  defines {
+    "BENCHMARK_HAS_PTHREAD_AFFINITY",
+    "HAVE_POSIX_REGEX",
+    "HAVE_PTHREAD_AFFINITY",
+    "HAVE_THREAD_SAFETY_ATTRIBUTES",
+  }
 end
 
 if (_PLATFORM_MACOS) then
+  defines {
+    "HAVE_POSIX_REGEX",
+    "HAVE_THREAD_SAFETY_ATTRIBUTES",
+  }
 end
 
 if (_PLATFORM_WINDOWS) then
-end
-
-if (_PLATFORM_WINUWP) then
 end
