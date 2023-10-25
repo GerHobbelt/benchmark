@@ -10,8 +10,8 @@
 namespace gbench_mm_test {
 
 class TestMemoryManager : public benchmark::MemoryManager {
-  void Start() BENCHMARK_OVERRIDE {}
-  void Stop(Result& result) BENCHMARK_OVERRIDE {
+  void Start() override {}
+  void Stop(Result& result) override {
     result.num_allocs = 42;
     result.max_bytes_used = 42000;
   }
