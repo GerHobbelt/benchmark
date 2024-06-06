@@ -106,7 +106,7 @@ write_basic_package_version_file(
 )
 
 configure_file("${PROJECT_SOURCE_DIR}/cmake/benchmark.pc.in" "${pkg_config}" @ONLY)
-configure_file("${PROJECT_SOURCE_DIR}/cmake/gbenchmark_main.pc.in" "${pkg_config_main}" @ONLY)
+configure_file("${PROJECT_SOURCE_DIR}/cmake/benchmark_main.pc.in" "${pkg_config_main}" @ONLY)
 
 export (
   TARGETS ${targets_to_export}
