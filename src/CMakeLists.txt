@@ -12,7 +12,7 @@ file(GLOB
     *.cc
     ${PROJECT_SOURCE_DIR}/include/benchmark/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-file(GLOB BENCHMARK_MAIN "gbenchmark_main.cc")
+file(GLOB BENCHMARK_MAIN "benchmark_main.cc")
 foreach(item ${BENCHMARK_MAIN})
   list(REMOVE_ITEM SOURCE_FILES "${item}")
 endforeach()
@@ -71,7 +71,7 @@ if (NOT BUILD_SHARED_LIBS)
 endif()
 
 # Benchmark main library
-add_library(gbenchmark_main "gbenchmark_main.cc")
+add_library(gbenchmark_main "benchmark_main.cc")
 add_library(gbenchmark::gbenchmark_main ALIAS gbenchmark_main)
 set_target_properties(gbenchmark_main PROPERTIES
   OUTPUT_NAME "gbenchmark_main"
