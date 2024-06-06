@@ -18,7 +18,7 @@ foreach(item ${BENCHMARK_MAIN})
 endforeach()
 
 add_library(benchmark ${SOURCE_FILES})
-add_library(benchmark::benchmark ALIAS benchmark)
+add_library(gbenchmark::benchmark ALIAS benchmark)
 set_target_properties(benchmark PROPERTIES
   OUTPUT_NAME "benchmark"
   VERSION ${GENERIC_LIB_VERSION}
@@ -72,14 +72,14 @@ endif()
 
 # Benchmark main library
 add_library(benchmark_main "benchmark_main.cc")
-add_library(benchmark::benchmark_main ALIAS benchmark_main)
+add_library(gbenchmark::benchmark_main ALIAS benchmark_main)
 set_target_properties(benchmark_main PROPERTIES
   OUTPUT_NAME "benchmark_main"
   VERSION ${GENERIC_LIB_VERSION}
   SOVERSION ${GENERIC_LIB_SOVERSION}
   DEFINE_SYMBOL benchmark_EXPORTS
 )
-target_link_libraries(benchmark_main PUBLIC benchmark::benchmark)
+target_link_libraries(benchmark_main PUBLIC gbenchmark::benchmark)
 
 set(generated_dir "${PROJECT_BINARY_DIR}")
 
