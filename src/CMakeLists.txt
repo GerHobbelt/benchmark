@@ -87,7 +87,7 @@ set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
 set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
 set(pkg_config "${generated_dir}/${PROJECT_NAME}.pc")
 set(pkg_config_main "${generated_dir}/${PROJECT_NAME}_main.pc")
-set(targets_to_export benchmark gbenchmark_main)
+set(targets_to_export gbenchmark gbenchmark_main)
 set(targets_export_name "${PROJECT_NAME}Targets")
 
 set(namespace "${PROJECT_NAME}::")
