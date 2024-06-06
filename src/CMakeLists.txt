@@ -37,33 +37,33 @@ set_property(
 
 # libpfm, if available
 if (PFM_FOUND)
-  target_link_libraries(benchmark PRIVATE PFM::libpfm)
-  target_compile_definitions(benchmark PRIVATE -DHAVE_LIBPFM)
+  target_link_libraries(gbenchmark PRIVATE PFM::libpfm)
+  target_compile_definitions(gbenchmark PRIVATE -DHAVE_LIBPFM)
 endif()
 
 # pthread affinity, if available
 if(HAVE_PTHREAD_AFFINITY)
-  target_compile_definitions(benchmark PRIVATE -DBENCHMARK_HAS_PTHREAD_AFFINITY)
+  target_compile_definitions(gbenchmark PRIVATE -DBENCHMARK_HAS_PTHREAD_AFFINITY)
 endif()
 
 # Link threads.
-target_link_libraries(benchmark PRIVATE Threads::Threads)
+target_link_libraries(gbenchmark PRIVATE Threads::Threads)
 
-target_link_libraries(benchmark PRIVATE ${BENCHMARK_CXX_LIBRARIES})
+target_link_libraries(gbenchmark PRIVATE ${BENCHMARK_CXX_LIBRARIES})
 
 if(HAVE_LIB_RT)
-  target_link_libraries(benchmark PRIVATE rt)
+  target_link_libraries(gbenchmark PRIVATE rt)
 endif(HAVE_LIB_RT)
 
 
 # We need extra libraries on Windows
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  target_link_libraries(benchmark PRIVATE shlwapi)
+  target_link_libraries(gbenchmark PRIVATE shlwapi)
 endif()
 
 # We need extra libraries on Solaris
 if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
-  target_link_libraries(benchmark PRIVATE kstat)
+  target_link_libraries(gbenchmark PRIVATE kstat)
 endif()
 
 if (NOT BUILD_SHARED_LIBS)
