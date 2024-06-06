@@ -18,7 +18,7 @@ foreach(item ${BENCHMARK_MAIN})
 endforeach()
 
 add_library(gbenchmark ${SOURCE_FILES})
-add_library(gbenchmark::gbenchmark ALIAS benchmark)
+add_library(gbenchmark::gbenchmark ALIAS gbenchmark)
 set_target_properties(gbenchmark PROPERTIES
   OUTPUT_NAME "gbenchmark"
   VERSION ${GENERIC_LIB_VERSION}
