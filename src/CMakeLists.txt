@@ -12,19 +12,19 @@ file(GLOB
     *.cc
     ${PROJECT_SOURCE_DIR}/include/benchmark/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-file(GLOB BENCHMARK_MAIN "benchmark_main.cc")
+file(GLOB BENCHMARK_MAIN "gbenchmark_main.cc")
 foreach(item ${BENCHMARK_MAIN})
   list(REMOVE_ITEM SOURCE_FILES "${item}")
 endforeach()
 
-add_library(benchmark ${SOURCE_FILES})
-add_library(gbenchmark::benchmark ALIAS benchmark)
-set_target_properties(benchmark PROPERTIES
-  OUTPUT_NAME "benchmark"
+add_library(gbenchmark ${SOURCE_FILES})
+add_library(gbenchmark::gbenchmark ALIAS benchmark)
+set_target_properties(gbenchmark PROPERTIES
+  OUTPUT_NAME "gbenchmark"
   VERSION ${GENERIC_LIB_VERSION}
   SOVERSION ${GENERIC_LIB_SOVERSION}
 )
-target_include_directories(benchmark PUBLIC
+target_include_directories(gbenchmark PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 
@@ -67,19 +67,19 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
 endif()
 
 if (NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(benchmark PUBLIC -DBENCHMARK_STATIC_DEFINE)
+  target_compile_definitions(gbenchmark PUBLIC -DBENCHMARK_STATIC_DEFINE)
 endif()
 
 # Benchmark main library
-add_library(benchmark_main "benchmark_main.cc")
-add_library(gbenchmark::benchmark_main ALIAS benchmark_main)
-set_target_properties(benchmark_main PROPERTIES
-  OUTPUT_NAME "benchmark_main"
+add_library(gbenchmark_main "gbenchmark_main.cc")
+add_library(gbenchmark::gbenchmark_main ALIAS gbenchmark_main)
+set_target_properties(gbenchmark_main PROPERTIES
+  OUTPUT_NAME "gbenchmark_main"
   VERSION ${GENERIC_LIB_VERSION}
   SOVERSION ${GENERIC_LIB_SOVERSION}
   DEFINE_SYMBOL benchmark_EXPORTS
 )
-target_link_libraries(benchmark_main PUBLIC gbenchmark::benchmark)
+target_link_libraries(gbenchmark_main PUBLIC gbenchmark::gbenchmark)
 
 set(generated_dir "${PROJECT_BINARY_DIR}")
 
@@ -87,7 +87,7 @@ set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
 set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
 set(pkg_config "${generated_dir}/${PROJECT_NAME}.pc")
 set(pkg_config_main "${generated_dir}/${PROJECT_NAME}_main.pc")
-set(targets_to_export benchmark benchmark_main)
+set(targets_to_export benchmark gbenchmark_main)
 set(targets_export_name "${PROJECT_NAME}Targets")
 
 set(namespace "${PROJECT_NAME}::")
@@ -106,7 +106,7 @@ write_basic_package_version_file(
 )
 
 configure_file("${PROJECT_SOURCE_DIR}/cmake/benchmark.pc.in" "${pkg_config}" @ONLY)
-configure_file("${PROJECT_SOURCE_DIR}/cmake/benchmark_main.pc.in" "${pkg_config_main}" @ONLY)
+configure_file("${PROJECT_SOURCE_DIR}/cmake/gbenchmark_main.pc.in" "${pkg_config_main}" @ONLY)
 
 export (
   TARGETS ${targets_to_export}
