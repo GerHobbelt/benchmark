@@ -105,7 +105,7 @@ std::string BenchmarkReporter::Run::benchmark_name() const {
 
 double BenchmarkReporter::Run::GetAdjustedRealTime() const {
   double new_time = real_accumulated_time * GetTimeUnitMultiplier(time_unit);
-  if (iterations != 0) new_time /= (static_cast<double>(iterations) / static_cast<double>(threads));
+  if (iterations != 0) new_time /= static_cast<double>(iterations);
   return new_time;
 }
 
