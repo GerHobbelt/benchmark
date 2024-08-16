@@ -338,12 +338,12 @@ bool BenchmarkRunner::ShouldReportIterationResults(
   // or because an error was reported.
   return i.results.skipped_ ||
          i.iters >= kMaxIterations ||  // Too many iterations already.
-         i.seconds >=
-             GetMinTimeToApply() ||  // The elapsed time is large enough.
+         (i.seconds >=  
+             GetMinTimeToApply() * b.threads()) ||  // The elapsed time is large enough.
          // CPU time is specified but the elapsed real time greatly exceeds
          // the minimum time.
          // Note that user provided timers are except from this test.
-         ((i.results.real_time_used >= 5 * GetMinTimeToApply()) &&
+         ((i.results.real_time_used >= (GetMinTimeToApply() * b.threads())) &&
           !b.use_manual_time());
 }
 
