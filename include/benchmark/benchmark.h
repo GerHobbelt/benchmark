@@ -1531,8 +1531,8 @@ class Fixture : public internal::Benchmark {
 // Note the workaround for Hexagon simulator passing argc != 0, argv = NULL.
 #define BENCHMARK_MAIN()                                                \
   int main(int argc, const char** argv) {                               \
-    const char arg0_default[] = "benchmark";                                  \
-    const char* args_default = arg0_default;                                  \
+    const char arg0_default[] = "benchmark";                            \
+    const char* args_default = arg0_default;                            \
     if (!argv) {                                                        \
       argc = 1;                                                         \
       argv = &args_default;                                             \
