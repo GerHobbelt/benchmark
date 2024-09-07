@@ -162,7 +162,7 @@ ValueUnion GetSysctlImp(std::string const& name) {
       mib[1] = HW_CPUSPEED;
     }
 
-    if (sysctl(mib, 2, buff.data(), &buff.Size, nullptr, 0) == -1) {
+    if (sysctl(mib, 2, buff.data(), &buff.size, nullptr, 0) == -1) {
       return ValueUnion();
     }
     return buff;
@@ -734,9 +734,9 @@ static double GetCPUCyclesPerSecond(CPUInfo::Scaling scaling) {
 #endif
   unsigned long long hz = 0;
 #if defined BENCHMARK_OS_OPENBSD
-  if (GetSysctl(freqStr, &hz)) return hz * 1000000;
+  if (GetSysctl(freqStr, &hz)) return static_cast<double>(hz * 1000000);
 #else
-  if (GetSysctl(freqStr, &hz)) return hz;
+  if (GetSysctl(freqStr, &hz)) return static_cast<double>(hz);
 #endif
   fprintf(stderr, "Unable to determine clock rate from sysctl: %s: %s\n",
           freqStr, strerror(errno));
