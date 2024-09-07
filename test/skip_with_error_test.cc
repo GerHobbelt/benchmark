@@ -38,8 +38,9 @@ struct TestCase {
   void CheckRun(Run const& run) const {
     BM_CHECK(name == run.benchmark_name())
         << "expected " << name << " got " << run.benchmark_name();
-    BM_CHECK(error_occurred == run.error_occurred);
-    BM_CHECK(error_message == run.error_message);
+    BM_CHECK_EQ(error_occurred,
+                benchmark::internal::SkippedWithError == run.skipped);
+    BM_CHECK(error_message == run.skip_message);
     if (error_occurred) {
       // BM_CHECK(run.iterations == 0);
     } else {
@@ -50,7 +51,8 @@ struct TestCase {
 
 std::vector<TestCase> ExpectedResults;
 
-int AddCases(const char* base_name, std::initializer_list<TestCase> const& v) {
+int AddCases(const std::string& base_name,
+             std::initializer_list<TestCase> const& v) {
   for (auto TC : v) {
     TC.name = base_name + TC.name;
     ExpectedResults.push_back(std::move(TC));
@@ -144,7 +146,8 @@ ADD_CASES("BM_error_during_running_ranged_for",
 
 void BM_error_after_running(benchmark::State& state) {
   for (auto _ : state) {
-    benchmark::DoNotOptimize(state.iterations());
+    auto iterations = state.iterations();
+    benchmark::DoNotOptimize(iterations);
   }
   if (state.thread_index() <= (state.threads() / 2))
     state.SkipWithError("error message");

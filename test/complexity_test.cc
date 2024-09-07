@@ -73,7 +73,7 @@ static int AddComplexityTest(const std::string &test_name,
 static void BM_Complexity_O1(benchmark::State &state) {
   for (auto _ : state) {
     for (int i = 0; i < 1024; ++i) {
-      benchmark::DoNotOptimize(&i);
+      benchmark::DoNotOptimize(i);
     }
   }
   state.SetComplexityN(state.range(0));
@@ -124,7 +124,8 @@ static void BM_Complexity_O_N(benchmark::State &state) {
   // Test worst case scenario (item not in vector)
   const int64_t item_not_in_vector = state.range(0) * 2;
   for (auto _ : state) {
-    benchmark::DoNotOptimize(std::find(v.begin(), v.end(), item_not_in_vector));
+    auto it = std::find(v.begin(), v.end(), item_not_in_vector);
+    benchmark::DoNotOptimize(it);
   }
   state.SetComplexityN(state.range(0));
 }
@@ -207,7 +208,8 @@ ADD_COMPLEXITY_CASES(n_lg_n_test_name, big_o_n_lg_n_test_name,
 static void BM_ComplexityCaptureArgs(benchmark::State &state, int n) {
   for (auto _ : state) {
     // This test requires a non-zero CPU time to avoid divide-by-zero
-    benchmark::DoNotOptimize(state.iterations());
+    auto iterations = state.iterations();
+    benchmark::DoNotOptimize(iterations);
   }
   state.SetComplexityN(n);
 }

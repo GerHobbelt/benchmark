@@ -1,20 +1,7 @@
-cmake_minimum_required (VERSION 3.16.3)
+# Require CMake 3.10. If available, use the policies up to CMake 3.22.
+cmake_minimum_required (VERSION 3.10...3.22)
 
-foreach(p
-    CMP0048 # OK to clear PROJECT_VERSION on project()
-    CMP0054 # CMake 3.1
-    CMP0056 # export EXE_LINKER_FLAGS to try_run
-    CMP0057 # Support no if() IN_LIST operator
-    CMP0063 # Honor visibility properties for all targets
-    CMP0067 # Honor language standard in try_compile() source file signature
-    CMP0077 # Allow option() overrides in importing projects
-    )
-  if(POLICY ${p})
-    cmake_policy(SET ${p} NEW)
-  endif()
-endforeach()
-
-project (benchmark VERSION 1.7.1 LANGUAGES CXX)
+project (benchmark VERSION 1.8.0 LANGUAGES CXX)
 
 option(BENCHMARK_ENABLE_TESTING "Enable testing of the benchmark library." OFF)
 option(BENCHMARK_ENABLE_EXCEPTIONS "Enable the use of exceptions in the benchmark library." ON)
@@ -25,6 +12,9 @@ option(BENCHMARK_FORCE_WERROR "Build Release candidates with -Werror regardless 
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI")
   # PGC++ maybe reporting false positives.
+  set(BENCHMARK_ENABLE_WERROR OFF)
+endif()
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "NVHPC")
   set(BENCHMARK_ENABLE_WERROR OFF)
 endif()
 if(BENCHMARK_FORCE_WERROR)
@@ -138,10 +128,6 @@ if (BENCHMARK_BUILD_32_BITS)
   add_required_cxx_compiler_flag(-m32)
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 if (MSVC)
   set(BENCHMARK_CXX_STANDARD 14)
 else()
@@ -190,9 +176,7 @@ else()
   add_cxx_compiler_flag(-Wshadow)
   add_cxx_compiler_flag(-Wfloat-equal)
   if(BENCHMARK_ENABLE_WERROR)
-      add_cxx_compiler_flag(-Werror RELEASE)
-      add_cxx_compiler_flag(-Werror RELWITHDEBINFO)
-      add_cxx_compiler_flag(-Werror MINSIZEREL)
+      add_cxx_compiler_flag(-Werror)
   endif()
   if (NOT BENCHMARK_ENABLE_TESTING)
     # Disable warning when compiling tests as gtest does not use 'override'.
@@ -213,9 +197,7 @@ else()
   endif()
   # Disable deprecation warnings for release builds (when -Werror is enabled).
   if(BENCHMARK_ENABLE_WERROR)
-      add_cxx_compiler_flag(-Wno-deprecated RELEASE)
-      add_cxx_compiler_flag(-Wno-deprecated RELWITHDEBINFO)
-      add_cxx_compiler_flag(-Wno-deprecated MINSIZEREL)
+      add_cxx_compiler_flag(-Wno-deprecated)
   endif()
   if (NOT BENCHMARK_ENABLE_EXCEPTIONS)
     add_cxx_compiler_flag(-fno-exceptions)
@@ -324,6 +306,7 @@ cxx_feature_check(STEADY_CLOCK)
 # Ensure we have pthreads
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+cxx_feature_check(PTHREAD_AFFINITY)
 
 if (BENCHMARK_ENABLE_LIBPFM)
   find_package(PFM)
