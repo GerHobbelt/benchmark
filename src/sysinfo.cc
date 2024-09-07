@@ -460,6 +460,8 @@ std::string GetSystemName() {
 #define HOST_NAME_MAX 256
 #elif defined(BENCHMARK_OS_SOLARIS)
 #define HOST_NAME_MAX MAXHOSTNAMELEN
+#elif defined(BENCHMARK_OS_ZOS)
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
 #else
 #pragma message("HOST_NAME_MAX not defined. using 64")
 #define HOST_NAME_MAX 64
@@ -655,7 +657,7 @@ static double GetCPUCyclesPerSecond(CPUInfo::Scaling scaling) {
                       &freq)) {
     // The value is in kHz (as the file name suggests).  For example, on a
     // 2GHz warpstation, the file contains the value "2000000".
-    return freq * 1000.0;
+    return static_cast<double>(freq) * 1000.0;
   }
 
   const double error_value = -1;

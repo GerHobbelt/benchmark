@@ -584,6 +584,12 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp const& value) {
 inline BENCHMARK_ALWAYS_INLINE void ClobberMemory() { _ReadWriteBarrier(); }
 #endif
 #else
+#ifdef BENCHMARK_HAS_CXX11
+template <class Tp>
+inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp&& value) {
+  internal::UseCharPointer(&reinterpret_cast<char const volatile&>(value));
+}
+#else
 template <class Tp>
 BENCHMARK_DEPRECATED_MSG(
     "The const-ref version of this method can permit "
@@ -591,6 +597,12 @@ BENCHMARK_DEPRECATED_MSG(
 inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp const& value) {
   internal::UseCharPointer(&reinterpret_cast<char const volatile&>(value));
 }
+
+template <class Tp>
+inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
+  internal::UseCharPointer(&reinterpret_cast<char const volatile&>(value));
+}
+#endif
 // FIXME Add ClobberMemory() for non-gnu and non-msvc compilers, before C++11.
 #endif
 
@@ -660,13 +672,15 @@ typedef std::map<std::string, Counter> UserCounters;
 // calculated automatically to the best fit.
 enum BigO { oNone, o1, oN, oNSquared, oNCubed, oLogN, oNLogN, oAuto, oLambda };
 
+typedef int64_t ComplexityN;
+
 typedef int64_t IterationCount;
 
 enum StatisticUnit { kTime, kPercentage };
 
 // BigOFunc is passed to a benchmark in order to specify the asymptotic
 // computational complexity for the benchmark.
-typedef double(BigOFunc)(IterationCount);
+typedef double(BigOFunc)(ComplexityN);
 
 // StatisticsFunc is passed to a benchmark in order to compute some descriptive
 // statistics over all the measurements of some type
@@ -734,13 +748,13 @@ class BENCHMARK_EXPORT State {
   // have been called previously.
   //
   // NOTE: KeepRunning may not be used after calling either of these functions.
-  BENCHMARK_ALWAYS_INLINE StateIterator begin();
-  BENCHMARK_ALWAYS_INLINE StateIterator end();
+  inline BENCHMARK_ALWAYS_INLINE StateIterator begin();
+  inline BENCHMARK_ALWAYS_INLINE StateIterator end();
 
   // Returns true if the benchmark should continue through another iteration.
   // NOTE: A benchmark may not return from the test until KeepRunning() has
   // returned false.
-  bool KeepRunning();
+  inline bool KeepRunning();
 
   // Returns true iff the benchmark should run n more iterations.
   // REQUIRES: 'n' > 0.
@@ -752,7 +766,7 @@ class BENCHMARK_EXPORT State {
   //   while (state.KeepRunningBatch(1000)) {
   //     // process 1000 elements
   //   }
-  bool KeepRunningBatch(IterationCount n);
+  inline bool KeepRunningBatch(IterationCount n);
 
   // REQUIRES: timer is running and 'SkipWithMessage(...)' or
   //   'SkipWithError(...)' has not been called by the current thread.
@@ -863,10 +877,12 @@ class BENCHMARK_EXPORT State {
   // and complexity_n will
   // represent the length of N.
   BENCHMARK_ALWAYS_INLINE
-  void SetComplexityN(int64_t complexity_n) { complexity_n_ = complexity_n; }
+  void SetComplexityN(ComplexityN complexity_n) {
+    complexity_n_ = complexity_n;
+  }
 
   BENCHMARK_ALWAYS_INLINE
-  int64_t complexity_length_n() const { return complexity_n_; }
+  ComplexityN complexity_length_n() const { return complexity_n_; }
 
   // If this routine is called with items > 0, then an items/s
   // label is printed on the benchmark report line for the currently
@@ -955,7 +971,7 @@ class BENCHMARK_EXPORT State {
   // items we don't need on the first cache line
   std::vector<int64_t> range_;
 
-  int64_t complexity_n_;
+  ComplexityN complexity_n_;
 
  public:
   // Container for user-defined counters.
@@ -970,7 +986,7 @@ class BENCHMARK_EXPORT State {
   void StartKeepRunning();
   // Implementation of KeepRunning() and KeepRunningBatch().
   // is_batch must be true unless n is 1.
-  bool KeepRunningInternal(IterationCount n, bool is_batch);
+  inline bool KeepRunningInternal(IterationCount n, bool is_batch);
   void FinishKeepRunning();
 
   const std::string name_;
@@ -1793,7 +1809,7 @@ class BENCHMARK_EXPORT BenchmarkReporter {
     // Keep track of arguments to compute asymptotic complexity
     BigO complexity;
     BigOFunc* complexity_lambda;
-    int64_t complexity_n;
+    ComplexityN complexity_n;
 
     // what statistics to compute from the measurements
     const std::vector<internal::Statistics>* statistics;
