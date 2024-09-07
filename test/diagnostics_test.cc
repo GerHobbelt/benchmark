@@ -85,8 +85,17 @@ BENCHMARK(BM_diagnostic_test_keep_running);
 #endif
 
 int main(int argc, const char** argv) {
+#ifdef NDEBUG
+  // This test is exercising functionality for debug builds, which are not
+  // available in release builds. Skip the test if we are in that environment
+  // to avoid a test failure.
+  std::cout << "Diagnostic test disabled in release build" << std::endl;
+  (void)argc;
+  (void)argv;
+#else
   benchmark::internal::GetAbortHandler() = &TestHandler;
   benchmark::Initialize(&argc, argv);
   benchmark::RunSpecifiedBenchmarks();
+#endif
   return 0;
 }
