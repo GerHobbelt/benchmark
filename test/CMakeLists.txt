@@ -5,6 +5,8 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 include(CheckCXXCompilerFlag)
 
+add_cxx_compiler_flag(-Wno-unused-variable)
+
 # NOTE: Some tests use `<cassert>` to perform the test. Therefore we must
 # strip -DNDEBUG from the default CMake flags in DEBUG mode.
 string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
@@ -183,7 +185,7 @@ compile_output_test(memory_manager_test)
 add_test(NAME memory_manager_test COMMAND memory_manager_test --benchmark_min_time=0.01s)
 
 # MSVC does not allow to set the language standard to C++98/03.
-if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(NOT (MSVC OR CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
   compile_benchmark_test(cxx03_test)
   set_target_properties(cxx03_test
       PROPERTIES
