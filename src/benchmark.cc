@@ -152,8 +152,16 @@ BENCHMARK_EXPORT std::map<std::string, std::string>*& GetGlobalContext() {
   return global_context;
 }
 
-// FIXME: wouldn't LTO mess this up?
-void UseCharPointer(char const volatile*) {}
+static void const volatile* volatile global_force_escape_pointer;
+
+// FIXME: Verify if LTO still messes this up?
+void UseCharPointer(char const volatile* const v) {
+  // We want to escape the pointer `v` so that the compiler can not eliminate
+  // computations that produced it. To do that, we escape the pointer by storing
+  // it into a volatile variable, since generally, volatile store, is not
+  // something the compiler is allowed to elide.
+  global_force_escape_pointer = reinterpret_cast<void const volatile*>(v);
+}
 
 }  // namespace internal
 
@@ -577,12 +585,16 @@ size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
     Err << "A custom file reporter was provided but "
            "--benchmark_out=<file> was not specified."
         << std::endl;
+    Out.flush();
+    Err.flush();
     std::exit(1);
   }
   if (!fname.empty()) {
     output_file.open(fname);
     if (!output_file.is_open()) {
       Err << "invalid file name: '" << fname << "'" << std::endl;
+      Out.flush();
+      Err.flush();
       std::exit(1);
     }
     if (!file_reporter) {
@@ -597,10 +609,16 @@ size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
   }
 
   std::vector<internal::BenchmarkInstance> benchmarks;
-  if (!FindBenchmarksInternal(spec, &benchmarks, &Err)) return 0;
+  if (!FindBenchmarksInternal(spec, &benchmarks, &Err)) {
+    Out.flush();
+    Err.flush();
+    return 0;
+  }
 
   if (benchmarks.empty()) {
     Err << "Failed to match any benchmarks against regex: " << spec << "\n";
+    Out.flush();
+    Err.flush();
     return 0;
   }
 
@@ -611,6 +629,8 @@ size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
     internal::RunBenchmarks(benchmarks, display_reporter, file_reporter);
   }
 
+  Out.flush();
+  Err.flush();
   return benchmarks.size();
 }
 
@@ -735,6 +755,8 @@ int InitializeStreams() {
 }
 
 }  // end namespace internal
+
+std::string GetBenchmarkVersion() { return {BENCHMARK_VERSION}; }
 
 void PrintDefaultHelp() {
   fprintf(stdout,
