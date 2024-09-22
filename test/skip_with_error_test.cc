@@ -188,6 +188,7 @@ ADD_CASES("BM_error_while_paused", {{"/1/threads:1", true, "error message"},
 #define main(cnt, arr)      gbenchmark_skip_with_error_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 

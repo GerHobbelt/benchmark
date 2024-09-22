@@ -63,6 +63,7 @@ BENCHMARK(BM_Chosen);
 #define main(cnt, arr)      gbenchmark_spec_arg_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   const std::string flag = "BM_NotChosen";
 

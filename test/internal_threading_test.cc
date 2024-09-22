@@ -191,6 +191,7 @@ BENCHMARK(BM_MainThreadAndWorkerThread)
 #define main(cnt, arr)      gbenchmark_internal_threading_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
 	RunOutputTests(argc, argv);
 	return 0;

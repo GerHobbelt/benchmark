@@ -84,6 +84,7 @@ BENCHMARK(BM_diagnostic_test_keep_running);
 #define main(cnt, arr)      gbenchmark_diagnostics_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
 #ifdef NDEBUG
   // This test is exercising functionality for debug builds, which are not

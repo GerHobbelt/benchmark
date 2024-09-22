@@ -19,6 +19,7 @@ BENCHMARK(BM_Verbosity);
 #define main(cnt, arr)      gbenchmark_spec_arg_verbosity_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   const int32_t flagv = 42;
 

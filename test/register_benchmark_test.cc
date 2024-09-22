@@ -197,6 +197,7 @@ void RunTestTwo() {
 #define main(cnt, arr)      gbenchmark_register_bench_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 

@@ -88,6 +88,7 @@ CHECK_BENCHMARK_RESULTS("BM_WithPauseResume", &SaveInstrCountWithResume);
 #define main(cnt, arr)      gbenchmark_perf_counters_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   if (!benchmark::internal::PerfCounters::kSupported) {
     return 0;

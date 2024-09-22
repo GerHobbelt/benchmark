@@ -78,6 +78,7 @@ BENCHMARK(BM_FooBa);
 #define main(cnt, arr)      gbenchmark_filter_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   bool list_only = false;
   for (int i = 0; i < argc; ++i)

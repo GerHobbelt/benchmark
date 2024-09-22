@@ -223,6 +223,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_ImplicitRepetitions_stddev\",%csv_report$"}});
 #define main(cnt, arr)      gbenchmark_repetitions_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
 	RunOutputTests(argc, argv);
 	return 0;

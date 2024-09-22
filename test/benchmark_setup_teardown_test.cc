@@ -136,6 +136,7 @@ BENCHMARK(BM_WithRep)
 #define main(cnt, arr)      gbenchmark_setup_teardown_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 

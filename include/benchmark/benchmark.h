@@ -1760,6 +1760,7 @@ class Fixture : public internal::Benchmark {
 // Helper macro to create a main routine in a test that runs the benchmarks
 // Note the workaround for Hexagon simulator passing argc != 0, argv = NULL.
 #define BENCHMARK_MAIN()                                                \
+  extern "C"                                                            \
   int main(int argc, const char** argv) {                               \
     const char arg0_default[] = "benchmark";                            \
     const char* args_default = arg0_default;                            \
@@ -1773,6 +1774,7 @@ class Fixture : public internal::Benchmark {
     ::benchmark::Shutdown();                                            \
     return 0;                                                           \
   }                                                                     \
+  extern "C"                                                            \
   int main(int, const char**)
 
 // ------------------------------------------------------

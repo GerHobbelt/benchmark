@@ -28,6 +28,7 @@ BENCHMARK(BM_SummaryRepeat)->Repetitions(3)->DisplayAggregatesOnly();
 #define main(cnt, arr)      gbenchmark_display_aggregates_only_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   const std::string output = GetFileReporterOutput(argc, argv);
 

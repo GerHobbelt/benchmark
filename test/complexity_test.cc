@@ -276,6 +276,7 @@ ADD_COMPLEXITY_CASES(complexity_capture_name, complexity_capture_name + "_BigO",
 #define main(cnt, arr)      gbenchmark_complexity_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
     RunOutputTests(argc, argv);
     return 0;

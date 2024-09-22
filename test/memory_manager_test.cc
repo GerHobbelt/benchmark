@@ -52,6 +52,7 @@ using namespace gbench_mm_test;
 #define main(cnt, arr)      gbenchmark_memory_manager_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   std::unique_ptr<benchmark::MemoryManager> mm(new TestMemoryManager());
 

@@ -35,6 +35,7 @@ struct BitRef {
 #define main(cnt, arr)      gbenchmark_do_not_optimize_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
   // this test verifies compilation of DoNotOptimize() for some types
 

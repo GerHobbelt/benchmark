@@ -570,6 +570,7 @@ CHECK_BENCHMARK_RESULTS("BM_Counters_kAvgIterationsRate",
 #define main(cnt, arr)      gbenchmark_user_counters_test_main(cnt, arr)
 #endif
 
+extern "C"
 int main(int argc, const char** argv) {
 	RunOutputTests(argc, argv);
 	return 0;
