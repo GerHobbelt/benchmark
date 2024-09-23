@@ -362,8 +362,8 @@ bool BenchmarkRunner::ShouldReportIterationResults(
              GetMinTimeToApply() * b.threads()) ||  // The elapsed time is large enough.
          // CPU time is specified but the elapsed real time greatly exceeds
          // the minimum time.
-         // Note that user provided timers are except from this test.
-         ((i.results.real_time_used >= (GetMinTimeToApply() * b.threads())) &&
+         // Note that user provided timers are excempt from this test.
+         ((i.results.real_time_used >= GetMinTimeToApply() * b.threads()) &&
           !b.use_manual_time());
 }
 
