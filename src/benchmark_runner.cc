@@ -444,10 +444,12 @@ void BenchmarkRunner::RunProfilerManager() {
   std::unique_ptr<internal::ThreadManager> manager;
   manager.reset(new internal::ThreadManager(1));
   b.Setup();
+  profiler_manager->AfterSetupStart();
   RunInThread(&b, profile_iterations, 0, manager.get(),
               /*perf_counters_measurement_ptr=*/nullptr,
               /*profiler_manager=*/profiler_manager);
   manager->WaitForAllThreads();
+  profiler_manager->BeforeTeardownStop();
   manager.reset();
   b.Teardown();
 }
