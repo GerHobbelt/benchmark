@@ -20,6 +20,9 @@ extern "C" {
 	int gbenchmark_future_test_main(int argc, const char** argv);
 	int gbenchmark_internal_threading_test_main(int argc, const char** argv);
 	int gbenchmark_map_test_main(int argc, const char** argv);
+	int gbenchmark_min_time_flag_iters_test_main(int argc, const char** argv);
+	int gbenchmark_min_time_flag_time_test_main(int argc, const char** argv);
+	int gbenchmark_profiler_manager_test_main(int argc, const char** argv);
 	int gbenchmark_memory_manager_test_main(int argc, const char** argv);
 	int gbenchmark_multiple_ranges_test_main(int argc, const char** argv);
 	int gbenchmark_options_test_main(int argc, const char** argv);

@@ -5,6 +5,8 @@
 #include "benchmark/benchmark.h"
 #include "output_test.h"
 
+#include "monolithic_examples.h"
+
 class TestProfilerManager : public benchmark::ProfilerManager {
  public:
   void AfterSetupStart() override { ++start_called; }
@@ -38,7 +40,13 @@ ADD_CASES(TC_JSONOut, {{"\"name\": \"BM_empty\",$"},
                        {"}", MR_Next}});
 ADD_CASES(TC_CSVOut, {{"^\"BM_empty\",%csv_report$"}});
 
-int main(int argc, char* argv[]) {
+
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr) gbenchmark_profiler_manager_test_main(cnt, arr)
+#endif
+
+extern "C"
+int main(int argc, const char** argv) {
   std::unique_ptr<TestProfilerManager> pm(new TestProfilerManager());
 
   benchmark::RegisterProfilerManager(pm.get());
@@ -47,4 +55,6 @@ int main(int argc, char* argv[]) {
 
   assert(pm->start_called == 1);
   assert(pm->stop_called == 1);
+
+	return 0;
 }

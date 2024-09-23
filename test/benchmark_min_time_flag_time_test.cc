@@ -9,6 +9,8 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
 // Tests that we can specify the min time with
 // --benchmark_min_time=<NUM> (no suffix needed) OR
 // --benchmark_min_time=<NUM>s
@@ -48,7 +50,7 @@ bool AlmostEqual(double a, double b) {
 }
 
 void DoTestHelper(int* argc, const char** argv, double expected) {
-  benchmark::Initialize(argc, const_cast<char**>(argv));
+  benchmark::Initialize(argc, argv);
 
   TestReporter test_reporter;
   const size_t returned_count =
@@ -68,7 +70,12 @@ static void BM_MyBench(benchmark::State& state) {
 }
 BENCHMARK(BM_MyBench);
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr) gbenchmark_min_time_flag_time_test_main(cnt, arr)
+#endif
+
+extern "C"
+int main(int argc, const char** argv) {
   // Make a fake argv and append the new --benchmark_min_time=<foo> to it.
   int fake_argc = argc + 1;
   const char** fake_argv = new const char*[static_cast<size_t>(fake_argc)];
