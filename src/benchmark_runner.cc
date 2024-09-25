@@ -133,15 +133,14 @@ BenchmarkReporter::Run CreateRunReport(
 // Adds the stats collected for the thread into manager->results.
 void RunInThread(const BenchmarkInstance* b, IterationCount iters,
                  int thread_id, ThreadManager* manager,
-                 PerfCountersMeasurement* perf_counters_measurement,
-                 ProfilerManager* profiler_manager_) {
+                 PerfCountersMeasurement* perf_counters_measurement) {
   internal::ThreadTimer timer(
       b->measure_process_cpu_time()
           ? internal::ThreadTimer::CreateProcessCpuTime()
           : internal::ThreadTimer::Create());
 
   State st = b->Run(iters, thread_id, &timer, manager,
-                    perf_counters_measurement, profiler_manager_);
+                    perf_counters_measurement);
   BM_CHECK(st.skipped() || st.iterations() >= st.max_iterations)
       << "Benchmark returned before State::KeepRunning() returned false!";
   {
@@ -286,14 +285,12 @@ BenchmarkRunner::IterationResults BenchmarkRunner::DoNIterations() {
   // Run all but one thread in separate threads
   for (std::size_t ti = 0; ti < pool.size(); ++ti) {
     pool[ti] = std::thread(&RunInThread, &b, iters, static_cast<int>(ti + 1),
-                           manager.get(), perf_counters_measurement_ptr,
-                           /*profiler_manager=*/nullptr);
+                           manager.get(), perf_counters_measurement_ptr);
   }
   // And run one thread here directly.
   // (If we were asked to run just one thread, we don't create new threads.)
   // Yes, we need to do this here *after* we start the separate threads.
-  RunInThread(&b, iters, 0, manager.get(), perf_counters_measurement_ptr,
-              /*profiler_manager=*/nullptr);
+  RunInThread(&b, iters, 0, manager.get(), perf_counters_measurement_ptr);
 
   // The main thread has finished. Now let's wait for the other threads.
   manager->WaitForAllThreads();
@@ -429,8 +426,7 @@ MemoryManager::Result* BenchmarkRunner::RunMemoryManager(
   manager.reset(new internal::ThreadManager(1));
   b.Setup();
   RunInThread(&b, memory_iterations, 0, manager.get(),
-              perf_counters_measurement_ptr,
-              /*profiler_manager=*/nullptr);
+              perf_counters_measurement_ptr);
   manager->WaitForAllThreads();
   manager.reset();
   b.Teardown();
@@ -446,8 +442,7 @@ void BenchmarkRunner::RunProfilerManager() {
   b.Setup();
   profiler_manager->AfterSetupStart();
   RunInThread(&b, profile_iterations, 0, manager.get(),
-              /*perf_counters_measurement_ptr=*/nullptr,
-              /*profiler_manager=*/profiler_manager);
+              /*perf_counters_measurement_ptr=*/nullptr);
   manager->WaitForAllThreads();
   profiler_manager->BeforeTeardownStop();
   manager.reset();
