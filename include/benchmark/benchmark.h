@@ -1511,12 +1511,8 @@ class Fixture : public internal::Benchmark {
     this->TearDown(st);
   }
 
-  // These will be deprecated ...
-  virtual void SetUp(const State&) {}
-  virtual void TearDown(const State&) {}
-  // ... In favor of these.
-  virtual void SetUp(State& st) { SetUp(const_cast<const State&>(st)); }
-  virtual void TearDown(State& st) { TearDown(const_cast<const State&>(st)); }
+  virtual void SetUp(State& st) {}
+  virtual void TearDown(State& st) {}
 
  protected:
   virtual void BenchmarkCase(State&) = 0;

@@ -31,7 +31,7 @@ class MultipleRangesFixture : public ::benchmark::Fixture {
                         {2, 7, 15},
                         {7, 6, 3}}) {}
 
-  void SetUp(const ::benchmark::State& state) override {
+  void SetUp(::benchmark::State& state) override {
     std::vector<int64_t> ranges = {state.range(0), state.range(1),
                                    state.range(2)};
 

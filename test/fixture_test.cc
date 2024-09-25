@@ -13,14 +13,14 @@ namespace gbench_fxture_test {
 
 class FIXTURE_BECHMARK_NAME : public ::benchmark::Fixture {
  public:
-  void SetUp(const ::benchmark::State& state) override {
+  void SetUp(::benchmark::State& state) override {
     if (state.thread_index() == 0) {
       assert(data.get() == nullptr);
       data.reset(new int(42));
     }
   }
 
-  void TearDown(const ::benchmark::State& state) override {
+  void TearDown(::benchmark::State& state) override {
     if (state.thread_index() == 0) {
       assert(data.get() != nullptr);
       data.reset();
