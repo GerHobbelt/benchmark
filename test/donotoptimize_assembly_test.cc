@@ -5,16 +5,36 @@
 #endif
 BENCHMARK_DISABLE_DEPRECATED_WARNING
 
+
+//#if !defined(BENCHMARK_STATIC_DEFINE)
+#if defined(_MSC_VER)
+#define WEAK_ATTR __declspec(selectany)
+#elif __has_attribute(weak) ||                      \
+    (defined(__GNUC__) && defined(__attribute__))
+// On gcc & clang, __has_attribute can test for __attribute__((attr)); we used
+// that feature to see if the __attribute__() feature is supported at all in
+// your active compiler.
+#define WEAK_ATTR __attribute__((weak))
+#else
+#define WEAK_ATTR
+#endif
+
+#if defined(DO_DEFINE_EXTERN_VARIABLES)
+#define EXTERN /**/
+#else
+#define EXTERN extern
+#endif
+
 extern "C" {
 
-extern int ExternInt;
-extern int ExternInt2;
-extern int ExternInt3;
-extern int BigArray[2049];
+EXTERN WEAK_ATTR int ExternInt;
+EXTERN WEAK_ATTR int ExternInt2;
+EXTERN WEAK_ATTR int ExternInt3;
+WEAK_ATTR int BigArray[2049];
 
-const int ConstBigArray[2049]{};
+static const int ConstBigArray[2049]{};
 
-inline int Add42(int x) { return x + 42; }
+static inline int Add42(int x) { return x + 42; }
 
 struct NotTriviallyCopyable {
   NotTriviallyCopyable();
@@ -31,10 +51,14 @@ struct Large {
 struct ExtraLarge {
   int arr[2049];
 };
+
 }
 
-extern ExtraLarge ExtraLargeObj;
-const ExtraLarge ConstExtraLargeObj{};
+EXTERN ExtraLarge ExtraLargeObj;
+static const ExtraLarge ConstExtraLargeObj{};
+
+
+#if !defined(DO_DEFINE_EXTERN_VARIABLES)
 
 // CHECK-LABEL: test_with_rvalue:
 extern "C" void test_with_rvalue() {
@@ -199,3 +223,5 @@ extern "C" void test_pointer_lvalue() {
   int *xp = &x;
   benchmark::DoNotOptimize(xp);
 }
+
+#endif // !defined(DO_DEFINE_EXTERN_VARIABLES)
