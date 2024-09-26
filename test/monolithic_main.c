@@ -2,19 +2,27 @@
 #define BUILD_MONOLITHIC 1
 #include "monolithic_examples.h"
 
+#include "gtest/gtest.h"
+
 
 // for clobber_memory_assembly_test.cc et al:
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	int ExternInt;
-	int ExternInt2;
-	int ExternInt3;
+int ExternInt = 10101;
+int ExternInt2 = 20202;
+int ExternInt3 = 30303;
 
 #ifdef __cplusplus
 }
 #endif
+
+static int gbenchmark_unit_tests_main(int argc, const char** argv) {
+  printf("Running gbenchmark's unit tests...\n");
+  testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
 
 
 #define USAGE_NAME   "gbenchtest"
@@ -22,6 +30,7 @@ extern "C" {
 #include "monolithic_main_internal_defs.h"
 
 MONOLITHIC_CMD_TABLE_START()
+	{ "unit_tests", {.fa = gbenchmark_unit_tests_main } },
 	{ "args_product", {.fa = gbenchmark_args_product_test_main } },
 	{ "basic", {.fa = gbenchmark_basic_test_main } },
 	{ "bench", {.fa = gbenchmark_bench_test_main } },
