@@ -576,6 +576,9 @@ size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
 size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
                               BenchmarkReporter* file_reporter,
                               std::string spec) {
+  // set log level once again, in case userland code fiddled with the verbosity flag after calling benchmark::Initialize() in order to override commandline settings.
+  internal::LogLevel() = FLAGS_v;
+
   if (spec.empty() || spec == "all")
     spec = ".";  // Regexp that matches all benchmarks
 
@@ -685,7 +688,7 @@ void (*HelperPrintf)();
 
 void PrintUsageAndExit() {
   HelperPrintf();
-  exit(0);
+  exit(EXIT_FAILURE);
 }
 
 void SetDefaultTimeUnitFromFlag(const std::string& time_unit_flag) {
