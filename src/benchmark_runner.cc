@@ -368,7 +368,7 @@ double BenchmarkRunner::GetMinTimeToApply() const {
   // In order to re-use functionality to run and measure benchmarks for running
   // a warmup phase of the benchmark, we need a way of telling whether to apply
   // min_time or min_warmup_time. This function will figure out if we are in the
-  // warmup phase and therefore need to apply min_warmup_time or if we already
+  // warmup phase and therefore need to apply min_warmup_time or if we are already
   // in the benchmarking phase and min_time needs to be applied.
   return warmup_done ? min_time : min_warmup_time;
 }
@@ -382,7 +382,7 @@ void BenchmarkRunner::RunWarmUp() {
   // Use the same mechanisms for warming up the benchmark as used for actually
   // running and measuring the benchmark.
   IterationResults i_warmup;
-  // Dont use the iterations determined in the warmup phase for the actual
+  // Don't use the iterations determined in the warmup phase for the actual
   // measured benchmark phase. While this may be a good starting point for the
   // benchmark and it would therefore get rid of the need to figure out how many
   // iterations are needed if min_time is set again, this may also be a complete
