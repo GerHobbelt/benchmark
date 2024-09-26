@@ -69,6 +69,8 @@ int main(int argc, const char** argv) {
   const std::vector<benchmark::IterationCount> iters = test_reporter.GetIters();
   assert(!iters.empty() && iters[0] == 4);
 
+  benchmark::Shutdown();
+
   delete[] fake_argv;
   return 0;
 }

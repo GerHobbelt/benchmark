@@ -111,5 +111,8 @@ int main(int argc, const char** argv) {
               << "] for --benchmark_filter but got [" << current_value << "]\n";
     return 3;
   }
+
+  benchmark::Shutdown();
+
   return 0;
 }

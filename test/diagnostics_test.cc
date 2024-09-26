@@ -97,6 +97,7 @@ int main(int argc, const char** argv) {
   benchmark::internal::GetAbortHandler() = &TestHandler;
   benchmark::Initialize(&argc, argv);
   benchmark::RunSpecifiedBenchmarks();
+  benchmark::Shutdown();
 #endif
   return 0;
 }

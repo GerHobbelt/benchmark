@@ -48,5 +48,8 @@ int main(int argc, const char** argv) {
         << "]\n";
     return 1;
   }
+
+  benchmark::Shutdown();
+
   return 0;
 }

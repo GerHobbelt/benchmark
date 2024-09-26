@@ -205,5 +205,7 @@ int main(int argc, const char** argv) {
   }
   assert(EB == ExpectedResults.end());
 
+  benchmark::Shutdown();
+
   return 0;
 }

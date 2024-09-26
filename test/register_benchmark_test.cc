@@ -203,5 +203,7 @@ int main(int argc, const char** argv) {
 
   RunTestOne();
   RunTestTwo();
+
+  benchmark::Shutdown();
   return 0;
 }

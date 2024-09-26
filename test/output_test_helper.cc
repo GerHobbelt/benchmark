@@ -444,6 +444,8 @@ void RunOutputTests(int argc, const char* argv[]) {
   // would use == but gcc spits a warning
   BM_CHECK(csv.name == std::string("CSVReporter"));
   internal::GetResultsChecker().CheckResults(csv.out_stream);
+
+  benchmark::Shutdown();
 }
 
 BENCHMARK_RESTORE_DEPRECATED_WARNING
@@ -509,6 +511,7 @@ std::string GetFileReporterOutput(int argc, const char* argv[]) {
 
   benchmark::Initialize(&argc, new_argv.data());
   benchmark::RunSpecifiedBenchmarks();
+  benchmark::Shutdown();
 
   // Read the output back from the file, and delete the file.
   std::ifstream tmp_stream(tmp_file_name);

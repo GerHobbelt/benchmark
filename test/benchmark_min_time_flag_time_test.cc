@@ -60,6 +60,8 @@ void DoTestHelper(int* argc, const char** argv, double expected) {
   // Check the min_time
   const std::vector<double>& min_times = test_reporter.GetMinTimes();
   assert(!min_times.empty() && AlmostEqual(min_times[0], expected));
+
+  benchmark::Shutdown();
 }
 
 }  // end namespace

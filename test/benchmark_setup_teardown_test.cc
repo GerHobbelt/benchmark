@@ -139,6 +139,8 @@ BENCHMARK(BM_WithRep)
 extern "C"
 int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
+  if (benchmark::ReportUnrecognizedArguments(argc, argv))
+		return 1;
 
   size_t ret = benchmark::RunSpecifiedBenchmarks(".");
   assert(ret > 0);
@@ -162,6 +164,8 @@ int main(int argc, const char** argv) {
 
   // Setup is call once for each repetition * num_arg =  4 * 4 = 16.
   assert(repetitions::setup == 16);
+
+  benchmark::Shutdown();
 
   return 0;
 }

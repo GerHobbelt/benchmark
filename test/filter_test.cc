@@ -91,6 +91,8 @@ int main(int argc, const char** argv) {
   const int64_t returned_count =
       static_cast<int64_t>(benchmark::RunSpecifiedBenchmarks(&test_reporter));
 
+  benchmark::Shutdown();
+
   if (argc == 2) {
     // Make sure we ran all of the tests
     std::stringstream ss(argv[1]);
