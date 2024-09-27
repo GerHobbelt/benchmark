@@ -6,23 +6,43 @@
 
 
 // for clobber_memory_assembly_test.cc et al:
+#if defined(_MSC_VER)
+#define WEAK_ATTR __declspec(selectany)
+#elif __has_attribute(weak) || (defined(__GNUC__) && defined(__attribute__))
+// On gcc & clang, __has_attribute can test for __attribute__((attr)); we used
+// that feature to see if the __attribute__() feature is supported at all in
+// your active compiler.
+#define WEAK_ATTR __attribute__((weak))
+#else
+#undef WEAK_ATTR
+#endif
+
+// only can do this at linker time when weak references are supported by the compiler:
+#ifdef WEAK_ATTR
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int ExternInt = 10101;
-int ExternInt2 = 20202;
-int ExternInt3 = 30303;
+WEAK_ATTR int ExternInt = 10101;
+WEAK_ATTR int ExternInt2 = 20202;
+WEAK_ATTR int ExternInt3 = 30303;
 
 #ifdef __cplusplus
 }
 #endif
+#endif
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 static int gbenchmark_unit_tests_main(int argc, const char** argv) {
   printf("Running gbenchmark's unit tests...\n");
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #define USAGE_NAME   "gbenchtest"
