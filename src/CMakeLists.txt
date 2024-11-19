@@ -67,7 +67,9 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
   set(BENCHMARK_PRIVATE_LINK_LIBRARIES -lkstat)
 endif()
 
+message("test out")
 if (NOT BUILD_SHARED_LIBS)
+  message("test in")
   target_compile_definitions(benchmark PUBLIC -DBENCHMARK_STATIC_DEFINE)
 endif()
 
