@@ -1127,6 +1127,7 @@ void BM_spin_empty(benchmark::State& state) {
 }
 
 BENCHMARK(BM_spin_empty)
+  ->Repetitions(3) // or add option --benchmark_repetitions=3
   ->ComputeStatistics("max", [](const std::vector<double>& v) -> double {
     return *(std::max_element(std::begin(v), std::end(v)));
   })
@@ -1146,8 +1147,9 @@ void BM_spin_empty(benchmark::State& state) {
 }
 
 BENCHMARK(BM_spin_empty)
+  ->Repetitions(3) // or add option --benchmark_repetitions=3
   ->ComputeStatistics("ratio", [](const std::vector<double>& v) -> double {
-    return std::begin(v) / std::end(v);
+    return v.front() / v.back();
   }, benchmark::StatisticUnit::kPercentage)
   ->Arg(512);
 ```

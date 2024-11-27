@@ -26,11 +26,6 @@
 namespace benchmark {
 namespace internal {
 
-#if 0
-// warning C5041: 'kMaxCounters': out-of-line definition for constexpr static data member is not needed and is deprecated in C++17
-constexpr size_t PerfCounterValues::kMaxCounters;
-#endif
-
 #if defined HAVE_LIBPFM
 
 size_t PerfCounterValues::Read(const std::vector<int>& leaders) {
