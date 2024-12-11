@@ -38,6 +38,7 @@ extern "C" {
 	int gbenchmark_user_counters_test_main(int argc, const char** argv);
 	int gbenchmark_user_counters_thousands_test_main(int argc, const char** argv);
 	int gbenchmark_spec_arg_verbosity_test_main(int argc, const char** argv);
+	int gbenchmark_min_rel_accuracy_flag_test_main(int argc, const char** argv);
 
 	int gbenchmark_main(int argc, const char** argv);
 

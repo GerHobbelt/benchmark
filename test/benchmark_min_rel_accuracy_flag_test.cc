@@ -61,7 +61,13 @@ static void BM_MyBench(benchmark::State& state) {
 }
 BENCHMARK(BM_MyBench)->UseManualTime();
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr) gbenchmark_min_rel_accuracy_flag_test_main(cnt, arr)
+#endif
+
+extern "C"
+int main(int argc, const char** argv)
+{
   // Make a fake argv and append the new
   // --benchmark_min_rel_accuracy=<min_rel_accuracy> to it.
   int fake_argc = argc + 2;
@@ -70,7 +76,7 @@ int main(int argc, char** argv) {
   fake_argv[argc] = "--benchmark_min_time=10s";
   fake_argv[argc + 1] = "--benchmark_min_rel_accuracy=0.01";
 
-  benchmark::Initialize(&fake_argc, const_cast<char**>(fake_argv));
+  benchmark::Initialize(&fake_argc, fake_argv);
 
   TestReporter test_reporter;
   const size_t returned_count =
