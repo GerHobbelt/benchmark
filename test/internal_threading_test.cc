@@ -11,6 +11,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "internal_threading_tests"
+
 static const std::chrono::duration<double, std::milli> time_frame(50);
 static const double time_frame_in_sec(
     std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1, 1>>>(
@@ -193,6 +195,6 @@ BENCHMARK(BM_MainThreadAndWorkerThread)
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(argc, argv);
+	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
 	return 0;
 }

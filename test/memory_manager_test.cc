@@ -7,6 +7,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "memory_manager_tests"
+
 namespace gbench_mm_test {
 
 class TestMemoryManager : public benchmark::MemoryManager {
@@ -57,7 +59,7 @@ int main(int argc, const char** argv) {
   std::unique_ptr<benchmark::MemoryManager> mm(new TestMemoryManager());
 
   benchmark::RegisterMemoryManager(mm.get());
-  RunOutputTests(argc, argv);
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
   benchmark::RegisterMemoryManager(nullptr);
   return 0;
 }

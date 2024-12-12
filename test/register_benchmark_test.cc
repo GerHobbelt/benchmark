@@ -9,6 +9,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "register_benchmark_tests"
+
 namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
@@ -70,7 +72,7 @@ void BM_function(benchmark::State& state) {
   }
 }
 BENCHMARK(BM_function);
-ReturnVal dummy = benchmark::RegisterBenchmark(
+ReturnVal dummy = benchmark::RegisterBenchmark(BENCHMARK_FAMILY_ID,
     "BM_function_manual_registration", BM_function);
 ADD_CASES({"BM_function"}, {"BM_function_manual_registration"});
 
@@ -90,7 +92,7 @@ int RegisterFromFunction() {
   std::pair<const char*, const char*> cases[] = {
       {"test1", "One"}, {"test2", "Two"}, {"test3", "Three"}};
   for (auto const& c : cases)
-    benchmark::RegisterBenchmark(c.first, &BM_extra_args, c.second);
+    benchmark::RegisterBenchmark(BENCHMARK_FAMILY_ID, c.first, &BM_extra_args, c.second);
   return 0;
 }
 int dummy2 = RegisterFromFunction();
@@ -106,7 +108,7 @@ void DISABLED_BM_function(benchmark::State& state) {
   }
 }
 BENCHMARK(DISABLED_BM_function);
-ReturnVal dummy3 = benchmark::RegisterBenchmark("DISABLED_BM_function_manual",
+ReturnVal dummy3 = benchmark::RegisterBenchmark(BENCHMARK_FAMILY_ID, "DISABLED_BM_function_manual",
                                                 DISABLED_BM_function);
 // No need to add cases because we don't expect them to run.
 
@@ -125,7 +127,7 @@ void TestRegistrationAtRuntime() {
 #ifdef BENCHMARK_HAS_CXX11
   {
     CustomFixture fx;
-    benchmark::RegisterBenchmark("custom_fixture", fx);
+    benchmark::RegisterBenchmark(BENCHMARK_FAMILY_ID, "custom_fixture", fx);
     AddCases({std::string("custom_fixture")});
   }
 #endif
@@ -137,7 +139,7 @@ void TestRegistrationAtRuntime() {
       }
       st.SetLabel(x);
     };
-    benchmark::RegisterBenchmark("lambda_benchmark", capturing_lam);
+    benchmark::RegisterBenchmark(BENCHMARK_FAMILY_ID, "lambda_benchmark", capturing_lam);
     AddCases({{"lambda_benchmark", x}});
   }
 #endif
@@ -149,7 +151,7 @@ void RunTestOne() {
   TestRegistrationAtRuntime();
 
   TestReporter test_reporter;
-  benchmark::RunSpecifiedBenchmarks(&test_reporter);
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter);
 
   typedef benchmark::BenchmarkReporter::Run Run;
   auto EB = ExpectedResults.begin();
@@ -169,15 +171,15 @@ void RunTestTwo() {
   assert(ExpectedResults.size() != 0 &&
          "must have at least one registered benchmark");
   ExpectedResults.clear();
-  benchmark::ClearRegisteredBenchmarks();
+  benchmark::ClearRegisteredBenchmarks(BENCHMARK_FAMILY_ID);
 
   TestReporter test_reporter;
-  size_t num_ran = benchmark::RunSpecifiedBenchmarks(&test_reporter);
+  size_t num_ran = benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter);
   assert(num_ran == 0);
   assert(test_reporter.all_runs_.begin() == test_reporter.all_runs_.end());
 
   TestRegistrationAtRuntime();
-  num_ran = benchmark::RunSpecifiedBenchmarks(&test_reporter);
+  num_ran = benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter);
   assert(num_ran == ExpectedResults.size());
 
   typedef benchmark::BenchmarkReporter::Run Run;

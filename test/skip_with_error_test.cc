@@ -9,6 +9,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "skip_with_error_tests"
+
 namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
@@ -193,7 +195,7 @@ int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
 
   TestReporter test_reporter;
-  benchmark::RunSpecifiedBenchmarks(&test_reporter);
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter);
 
   typedef benchmark::BenchmarkReporter::Run Run;
   auto EB = ExpectedResults.begin();

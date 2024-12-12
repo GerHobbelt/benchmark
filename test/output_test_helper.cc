@@ -387,7 +387,7 @@ int SetSubstitutions(
 // CSVReporter but don't want to trigger -Werror=-Wdeprecated-declarations
 BENCHMARK_DISABLE_DEPRECATED_WARNING
 
-void RunOutputTests(int argc, const char* argv[]) {
+void RunOutputTests(const std::string& family, int argc, const char* argv[]) {
   using internal::GetTestCaseList;
   benchmark::Initialize(&argc, argv);
   auto options = benchmark::internal::GetOutputOptions(/*force_no_color*/ true);
@@ -421,7 +421,7 @@ void RunOutputTests(int argc, const char* argv[]) {
   // Create the test reporter and run the benchmarks.
   std::cout << "Running benchmarks...\n";
   internal::TestReporter test_rep({&CR, &JR, &CSVR});
-  benchmark::RunSpecifiedBenchmarks(&test_rep);
+  benchmark::RunSpecifiedBenchmarks(family, &test_rep);
 
   for (auto& rep_test : TestCases) {
     std::string msg =
@@ -496,7 +496,7 @@ static std::string GetTempFileName() {
   std::abort();
 }
 
-std::string GetFileReporterOutput(int argc, const char* argv[]) {
+std::string GetFileReporterOutput(const std::string& family, int argc, const char* argv[]) {
   std::vector<const char*> new_argv(argv, argv + argc);
   assert(static_cast<decltype(new_argv)::size_type>(argc) == new_argv.size());
 
@@ -510,7 +510,7 @@ std::string GetFileReporterOutput(int argc, const char* argv[]) {
   argc = int(new_argv.size());
 
   benchmark::Initialize(&argc, new_argv.data());
-  benchmark::RunSpecifiedBenchmarks();
+  benchmark::RunSpecifiedBenchmarks(family, false);
   benchmark::Shutdown();
 
   // Read the output back from the file, and delete the file.

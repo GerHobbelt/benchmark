@@ -6,6 +6,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "map_tests"
+
 namespace {
 
 std::map<int, int> ConstructRandomMap(int size) {

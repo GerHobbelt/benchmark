@@ -7,6 +7,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "fixture_tests"
+
 namespace gbench_fxture_test {
 
 #define FIXTURE_BECHMARK_NAME MyFixture

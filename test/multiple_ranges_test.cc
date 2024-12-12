@@ -8,6 +8,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "multiple_ranges_tests"
+
 class MultipleRangesFixture : public ::benchmark::Fixture {
  public:
   MultipleRangesFixture()

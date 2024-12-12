@@ -7,6 +7,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "spec_arg_verbosity_tests"
+
 // Tests that the user specified verbosity level can be get.
 static void BM_Verbosity(benchmark::State& state) {
   for (auto _ : state) {

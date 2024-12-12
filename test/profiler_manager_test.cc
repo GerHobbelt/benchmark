@@ -7,6 +7,8 @@
 
 #include "monolithic_examples.h"
 
+#define BENCHMARK_FAMILY_ID "profiler_manager_tests"
+
 class TestProfilerManager : public benchmark::ProfilerManager {
  public:
   void AfterSetupStart() override { ++start_called; }
@@ -50,7 +52,7 @@ int main(int argc, const char** argv) {
   std::unique_ptr<TestProfilerManager> pm(new TestProfilerManager());
 
   benchmark::RegisterProfilerManager(pm.get());
-  RunOutputTests(argc, argv);
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
   benchmark::RegisterProfilerManager(nullptr);
 
   assert(pm->start_called == 1);

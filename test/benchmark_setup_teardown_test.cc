@@ -11,6 +11,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "setup_teardown_tests"
+
 // Test that Setup() and Teardown() are called exactly once
 // for each benchmark run (single-threaded).
 namespace singlethreaded {
@@ -142,7 +144,7 @@ int main(int argc, const char** argv) {
   if (benchmark::ReportUnrecognizedArguments(argc, argv))
 		return 1;
 
-  size_t ret = benchmark::RunSpecifiedBenchmarks(".");
+  size_t ret = benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, ".");
   assert(ret > 0);
 
   // Setup/Teardown is called once for each arg group (1,3,5,7).

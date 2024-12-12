@@ -7,6 +7,7 @@
 
 #include "monolithic_examples.h"
 
+#define BENCHMARK_FAMILY_ID   "args_product"
 
 class ArgsProductFixture : public ::benchmark::Fixture {
  public:

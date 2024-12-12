@@ -9,6 +9,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "report_aggregates_only_tests"
+
 namespace gbench_aggregates_only_test {
 
 // Ok this test is super ugly. We want to check what happens with the file
@@ -30,7 +32,7 @@ BENCHMARK(BM_SummaryRepeat)->Repetitions(3)->ReportAggregatesOnly();
 
 extern "C"
 int main(int argc, const char** argv) {
-  const std::string output = GetFileReporterOutput(argc, argv);
+  const std::string output = GetFileReporterOutput(BENCHMARK_FAMILY_ID, argc, argv);
 
   if (SubstrCnt(output, "\"name\": \"BM_SummaryRepeat/repeats:3") != 4 ||
       SubstrCnt(output, "\"name\": \"BM_SummaryRepeat/repeats:3_mean\"") != 1 ||

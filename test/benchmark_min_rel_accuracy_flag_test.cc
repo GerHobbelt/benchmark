@@ -8,6 +8,10 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+#define BENCHMARK_FAMILY_ID "min_rel_accuracy_tests"
+
 // Tests that if a benchmark measures time manually, we can specify the required
 // relative accuracy with --benchmark_min_rel_accuracy=<min_rel_accuracy>.
 namespace {
@@ -80,7 +84,7 @@ int main(int argc, const char** argv)
 
   TestReporter test_reporter;
   const size_t returned_count =
-      benchmark::RunSpecifiedBenchmarks(&test_reporter, "BM_MyBench");
+      benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter, "BM_MyBench");
   assert(returned_count == 1);
 
   // Check the executed iters.

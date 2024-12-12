@@ -11,6 +11,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "options_tests"
+
 void BM_basic(benchmark::State& state) {
   for (auto _ : state) {
   }

@@ -3,6 +3,7 @@
 
 #include "monolithic_examples.h"
 
+#define BENCHMARK_FAMILY_ID   "basic_tests"
 
 #define BASIC_BENCHMARK_TEST(x) BENCHMARK(x)->Arg(8)->Arg(512)->Arg(8192)
 

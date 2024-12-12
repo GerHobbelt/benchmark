@@ -10,6 +10,8 @@
 
 
 
+#define BENCHMARK_FAMILY_ID "perf_counters_tests"
+
 namespace benchmark {
 
 BM_DECLARE_string(benchmark_perf_counters);
@@ -95,7 +97,7 @@ int main(int argc, const char** argv) {
   }
   benchmark::FLAGS_benchmark_perf_counters = "CYCLES,INSTRUCTIONS";
   benchmark::internal::PerfCounters::Initialize();
-  RunOutputTests(argc, argv);
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
 
   BM_CHECK_GT(withPauseResumeInstrCount, kIters);
   BM_CHECK_GT(withoutPauseResumeInstrCount, kIters);

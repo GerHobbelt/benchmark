@@ -11,6 +11,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "complexity_tests"
+
 namespace {
 
 #define ADD_COMPLEXITY_CASES(...) \
@@ -278,6 +280,6 @@ ADD_COMPLEXITY_CASES(complexity_capture_name, complexity_capture_name + "_BigO",
 
 extern "C"
 int main(int argc, const char** argv) {
-    RunOutputTests(argc, argv);
+    RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
     return 0;
 }

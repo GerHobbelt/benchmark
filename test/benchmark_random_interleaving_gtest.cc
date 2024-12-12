@@ -8,6 +8,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#define BENCHMARK_FAMILY_ID "random_interleaving_gtests"
+
 namespace benchmark {
 
 BM_DECLARE_bool(benchmark_enable_random_interleaving);
@@ -53,7 +55,7 @@ class BenchmarkTest : public testing::Test {
 
     std::unique_ptr<BenchmarkReporter> reporter(new NullReporter());
     FLAGS_benchmark_filter = pattern;
-    RunSpecifiedBenchmarks(reporter.get());
+    RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, reporter.get());
 
     queue->Put("DONE");  // End marker
   }

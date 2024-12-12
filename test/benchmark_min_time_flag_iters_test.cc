@@ -9,6 +9,8 @@
 
 #include "monolithic_examples.h"
 
+#define BENCHMARK_FAMILY_ID "min_time_flag_iters_tests"
+
 // Tests that we can specify the number of iterations with
 // --benchmark_min_time=<NUM>x.
 namespace {
@@ -62,7 +64,7 @@ int main(int argc, const char** argv) {
 
   TestReporter test_reporter;
   const size_t returned_count =
-      benchmark::RunSpecifiedBenchmarks(&test_reporter, "BM_MyBench");
+      benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter, "BM_MyBench");
   assert(returned_count == 1);
 
   // Check the executed iters.

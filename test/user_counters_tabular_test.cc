@@ -7,6 +7,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "user_counters_tabular_tests"
+
 namespace gbench_user_counters_tabular_test {
 
 // @todo: <jpmag> this checks the full output at once; the rule for
@@ -572,6 +574,6 @@ CHECK_BENCHMARK_RESULTS("BM_CounterSet2_Tabular", &CheckSet2);
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(argc, argv);
+	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
 	return 0;
 }

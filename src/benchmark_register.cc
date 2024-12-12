@@ -72,30 +72,60 @@ namespace internal {
 // benchmark identifies a family of related benchmarks to run.
 class BenchmarkFamilies {
  public:
-  static BenchmarkFamilies* GetInstance();
+  static BenchmarkFamilies* GetInstance(const std::string& family);
+
+	// Get a list of all registered benchmark families
+  static std::vector<std::string> GetBenchmarkFamilies(void);
+
+  // Clear all registered benchmark families.
+  static void ClearBenchmarkFamilies(void);
 
   // Registers a benchmark family and returns the index assigned to it.
   size_t AddBenchmark(std::unique_ptr<Benchmark> family);
 
-  // Clear all registered benchmark families.
+  // Clear all registered benchmarks in this family.
   void ClearBenchmarks();
 
-  // Extract the list of benchmark instances that match the specified
+  // Extract the list of benchmark instances in this family that match the specified
   // regular expression.
   bool FindBenchmarks(std::string re,
                       std::vector<BenchmarkInstance>* benchmarks,
                       std::ostream* Err);
 
- private:
-  BenchmarkFamilies() {}
+  BenchmarkFamilies() = default;
+
+private:
+  static std::map<std::string, BenchmarkFamilies>* instances_;
 
   std::vector<std::unique_ptr<Benchmark>> families_;
   Mutex mutex_;
 };
 
-BenchmarkFamilies* BenchmarkFamilies::GetInstance() {
-  static BenchmarkFamilies instance;
-  return &instance;
+std::string DefaultActiveBenchmarkFamily("gbenchmark");
+
+std::map<std::string, BenchmarkFamilies>* BenchmarkFamilies::instances_ = nullptr;
+
+BenchmarkFamilies* BenchmarkFamilies::GetInstance(const std::string& family) {
+  if (instances_ == nullptr) {
+    instances_ = new std::map<std::string, BenchmarkFamilies>();
+  }
+
+  return &((*instances_)[family]);
+}
+
+std::vector<std::string> BenchmarkFamilies::GetBenchmarkFamilies(void) {
+  std::vector<std::string> keys;
+  if (instances_ != nullptr) 
+    for (auto it = instances_->begin(); it != instances_->end(); ++it)
+      keys.push_back(it->first);
+  
+  return keys;
+}
+
+void BenchmarkFamilies::ClearBenchmarkFamilies(void) {
+	instances_->clear();
+  delete instances_;
+  instances_ = nullptr;
 }
 
 size_t BenchmarkFamilies::AddBenchmark(std::unique_ptr<Benchmark> family) {
@@ -175,7 +205,7 @@ bool BenchmarkFamilies::FindBenchmarks(
 
           ++per_family_instance_index;
 
-          // Only bump the next family index once we've estabilished that
+          // Only bump the next family index once we've established that
           // at least one instance of this family will be run.
           if (next_family_index == family_index) ++next_family_index;
         }
@@ -185,19 +215,19 @@ bool BenchmarkFamilies::FindBenchmarks(
   return true;
 }
 
-Benchmark* RegisterBenchmarkInternal(Benchmark* bench) {
+Benchmark* RegisterBenchmarkInternal(const std::string& family, Benchmark* bench) {
   std::unique_ptr<Benchmark> bench_ptr(bench);
-  BenchmarkFamilies* families = BenchmarkFamilies::GetInstance();
+  BenchmarkFamilies* families = BenchmarkFamilies::GetInstance(family);
   families->AddBenchmark(std::move(bench_ptr));
   return bench;
 }
 
 // FIXME: This function is a hack so that benchmark.cc can access
 // `BenchmarkFamilies`
-bool FindBenchmarksInternal(const std::string& re,
+bool FindBenchmarksInternal(const std::string& family, const std::string& re,
                             std::vector<BenchmarkInstance>* benchmarks,
                             std::ostream* Err) {
-  return BenchmarkFamilies::GetInstance()->FindBenchmarks(re, benchmarks, Err);
+  return BenchmarkFamilies::GetInstance(family)->FindBenchmarks(re, benchmarks, Err);
 }
 
 //=============================================================================//
@@ -508,8 +538,14 @@ void FunctionBenchmark::Run(State& st) { func_(st); }
 
 }  // end namespace internal
 
-void ClearRegisteredBenchmarks() {
-  internal::BenchmarkFamilies::GetInstance()->ClearBenchmarks();
+void ClearRegisteredBenchmarks(const std::string& family) {
+  internal::BenchmarkFamilies::GetInstance(family)->ClearBenchmarks();
+}
+
+void ClearAllRegisteredBenchmarks(void) {
+  for (auto family : internal::BenchmarkFamilies::GetBenchmarkFamilies()) {
+    internal::BenchmarkFamilies::GetInstance(family)->ClearBenchmarks();
+  }
 }
 
 std::vector<int64_t> CreateRange(int64_t lo, int64_t hi, int multi) {

@@ -19,6 +19,8 @@
 
 #endif
 
+#define BENCHMARK_FAMILY_ID "cxx03_tests"
+
 static void BM_empty(benchmark::State& state) {
   while (state.KeepRunning()) {
     volatile benchmark::IterationCount x = state.iterations();

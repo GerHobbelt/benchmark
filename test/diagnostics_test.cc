@@ -16,6 +16,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID   "diagnostics_tests"
+
 #if defined(__GNUC__) && !defined(__EXCEPTIONS)
 #define TEST_HAS_NO_EXCEPTIONS
 #endif
@@ -96,7 +98,7 @@ int main(int argc, const char** argv) {
 #else
   benchmark::internal::GetAbortHandler() = &TestHandler;
   benchmark::Initialize(&argc, argv);
-  benchmark::RunSpecifiedBenchmarks();
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, false);
   benchmark::Shutdown();
 #endif
   return 0;

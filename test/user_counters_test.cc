@@ -7,6 +7,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "user_counters_tests"
+
 namespace gbench_user_counters_test {
 
 // ========================================================================= //
@@ -572,6 +574,6 @@ CHECK_BENCHMARK_RESULTS("BM_Counters_kAvgIterationsRate",
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(argc, argv);
+	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
 	return 0;
 }

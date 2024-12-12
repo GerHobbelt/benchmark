@@ -7,6 +7,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "templated_fixture_tests"
+
 namespace gbench_templated_fixture_test {
 
 template <typename T>

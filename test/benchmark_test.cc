@@ -23,6 +23,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "benchmark_tests"
+
 #if defined(__GNUC__)
 #define BENCHMARK_NOINLINE __attribute__((noinline))
 #else

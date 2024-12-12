@@ -1186,12 +1186,12 @@ Output collected from this profiling run must be reported separately.
 
 <a name="using-register-benchmark" />
 
-## Using RegisterBenchmark(name, fn, args...)
+## Using RegisterBenchmark(family, name, fn, args...)
 
-The `RegisterBenchmark(name, func, args...)` function provides an alternative
+The `RegisterBenchmark(family, name, func, args...)` function provides an alternative
 way to create and register benchmarks.
-`RegisterBenchmark(name, func, args...)` creates, registers, and returns a
-pointer to a new benchmark with the specified `name` that invokes
+`RegisterBenchmark(family, name, func, args...)` creates, registers, and returns a
+pointer to a new benchmark with the specified `name` and `family` that invokes
 `func(st, args...)` where `st` is a `benchmark::State` object.
 
 Unlike the `BENCHMARK` registration macros, which can only be used at the global
@@ -1207,9 +1207,12 @@ auto BM_test = [](benchmark::State& st, auto Inputs) { /* ... */ };
 
 int main(int argc, char** argv) {
   for (auto& test_input : { /* ... */ })
-      benchmark::RegisterBenchmark(test_input.name(), BM_test, test_input);
+      benchmark::RegisterBenchmark(
+	      BENCHMARK_FAMILY_ID, test_input.name(),
+		  BM_test, test_input
+	  );
   benchmark::Initialize(&argc, argv);
-  benchmark::RunSpecifiedBenchmarks();
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK__FAMILY_ID);
   benchmark::Shutdown();
 }
 ```

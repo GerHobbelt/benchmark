@@ -19,12 +19,15 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "gbenchmark_null_tests"
+
 
 #if defined(BUILD_MONOLITHIC)
 #define main(cnt, arr)      gbenchmark_main(cnt, arr)
 #endif
 
 BENCHMARK_EXPORT int main(int, const char**);
+
 BENCHMARK_MAIN();
 
 #endif

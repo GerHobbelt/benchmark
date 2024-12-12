@@ -9,6 +9,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "reporter_output_tests"
+
 namespace gbench_reporter_output_test {
 
 // ========================================================================= //
@@ -1144,6 +1146,6 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_CSV_Format\",,,,,,,,true,\"\"\"freedom\"\"\"$"}});
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(argc, argv);
+	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
 	return 0;
 }

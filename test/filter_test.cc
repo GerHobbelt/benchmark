@@ -13,6 +13,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "filter_tests"
+
 namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
@@ -89,7 +91,7 @@ int main(int argc, const char** argv) {
 
   TestReporter test_reporter;
   const int64_t returned_count =
-      static_cast<int64_t>(benchmark::RunSpecifiedBenchmarks(&test_reporter));
+      static_cast<int64_t>(benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter));
 
   benchmark::Shutdown();
 

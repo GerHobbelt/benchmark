@@ -13,6 +13,8 @@
 #include "monolithic_examples.h"
 
 
+#define BENCHMARK_FAMILY_ID "spec_arg_tests"
+
 // Tests that we can override benchmark-spec value from FLAGS_benchmark_filter
 // with argument to RunSpecifiedBenchmarks(...).
 
@@ -91,7 +93,7 @@ int main(int argc, const char** argv) {
   TestReporter test_reporter;
   const char* const spec = "BM_Chosen";
   const size_t returned_count =
-      benchmark::RunSpecifiedBenchmarks(&test_reporter, spec);
+      benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter, spec);
   assert(returned_count == 1);
   const std::vector<std::string> matched_functions =
       test_reporter.GetMatchedFunctions();

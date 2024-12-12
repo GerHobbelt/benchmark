@@ -3,6 +3,8 @@
 #include "benchmark/benchmark.h"
 #include "gtest/gtest.h"
 
+#define BENCHMARK_FAMILY_ID "profiler_manager_gtests"
+
 namespace {
 
 class TestProfilerManager : public benchmark::ProfilerManager {

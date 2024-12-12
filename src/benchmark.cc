@@ -562,31 +562,36 @@ BenchmarkReporter* CreateDefaultDisplayReporter() {
   return default_display_reporter;
 }
 
-size_t RunSpecifiedBenchmarks() {
-  return RunSpecifiedBenchmarks(nullptr, nullptr, FLAGS_benchmark_filter);
+size_t RunSpecifiedBenchmarks(const std::string& family, bool dummy) {
+  return RunSpecifiedBenchmarks(family, nullptr, nullptr, FLAGS_benchmark_filter);
 }
 
-size_t RunSpecifiedBenchmarks(std::string spec) {
-  return RunSpecifiedBenchmarks(nullptr, nullptr, std::move(spec));
+size_t RunSpecifiedBenchmarks(const std::string& family, const std::string &spec) {
+  return RunSpecifiedBenchmarks(family, nullptr, nullptr, spec);
 }
 
-size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter) {
-  return RunSpecifiedBenchmarks(display_reporter, nullptr,
+size_t RunSpecifiedBenchmarks(const std::string& family, const char* spec) {
+  return RunSpecifiedBenchmarks(family, nullptr, nullptr, spec);
+}
+
+size_t RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter) {
+  return RunSpecifiedBenchmarks(family, display_reporter, nullptr,
                                 FLAGS_benchmark_filter);
 }
 
-size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
-                              std::string spec) {
-  return RunSpecifiedBenchmarks(display_reporter, nullptr, std::move(spec));
+size_t RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter,
+                              const std::string &spec) {
+  return RunSpecifiedBenchmarks(family, display_reporter, nullptr, spec);
 }
 
-size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
+size_t RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter,
                               BenchmarkReporter* file_reporter) {
-  return RunSpecifiedBenchmarks(display_reporter, file_reporter,
+  return RunSpecifiedBenchmarks(family, display_reporter,
+                                file_reporter,
                                 FLAGS_benchmark_filter);
 }
 
-size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
+size_t RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter,
                               BenchmarkReporter* file_reporter,
                               std::string spec) {
   // set log level once again, in case userland code fiddled with the verbosity flag after calling benchmark::Initialize() in order to override commandline settings.
@@ -635,7 +640,7 @@ size_t RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
   }
 
   std::vector<internal::BenchmarkInstance> benchmarks;
-  if (!FindBenchmarksInternal(spec, &benchmarks, &Err)) {
+  if (!FindBenchmarksInternal(family, spec, &benchmarks, &Err)) {
     Out.flush();
     Err.flush();
     return 0;

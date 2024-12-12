@@ -11,6 +11,8 @@
 
 #include "monolithic_examples.h"
 
+#define BENCHMARK_FAMILY_ID "min_time_falg_time_tests"
+
 // Tests that we can specify the min time with
 // --benchmark_min_time=<NUM> (no suffix needed) OR
 // --benchmark_min_time=<NUM>s
@@ -54,7 +56,7 @@ void DoTestHelper(int* argc, const char** argv, double expected) {
 
   TestReporter test_reporter;
   const size_t returned_count =
-      benchmark::RunSpecifiedBenchmarks(&test_reporter, "BM_MyBench");
+      benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &test_reporter, "BM_MyBench");
   assert(returned_count == 1);
 
   // Check the min_time

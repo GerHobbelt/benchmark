@@ -39,9 +39,9 @@ BENCHMARK(BM_StringCopy);
 //       my_unittest --benchmark_filter=BM_StringCreation
 //       my_unittest --benchmark_filter=String
 //       my_unittest --benchmark_filter='Copy|Creation'
-int main(int argc, char** argv) {
+int main(int argc, const char** argv) {
   benchmark::Initialize(&argc, argv);
-  benchmark::RunSpecifiedBenchmarks();
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID);
   benchmark::Shutdown();
   return 0;
 }
@@ -391,18 +391,19 @@ BENCHMARK_EXPORT BenchmarkReporter* CreateDefaultDisplayReporter();
 //  'file_reporter' is ignored.
 //
 // RETURNS: The number of matching benchmarks.
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks();
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(std::string spec);
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, bool dummy);     // dummy to catch collision with old API: those should use the (family, spec) call instead!
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, const std::string &spec);
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, const char* spec);
 
 BENCHMARK_EXPORT size_t
-RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter);
+RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter);
 BENCHMARK_EXPORT size_t
-RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter, std::string spec);
+RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter, const std::string &spec);
 
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, 
     BenchmarkReporter* display_reporter, BenchmarkReporter* file_reporter);
 BENCHMARK_EXPORT size_t
-RunSpecifiedBenchmarks(BenchmarkReporter* display_reporter,
+RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter,
                        BenchmarkReporter* file_reporter, std::string spec);
 
 // TimeUnit is passed to a benchmark in order to specify the order of magnitude
@@ -499,7 +500,7 @@ void UseCharPointer(char const volatile*);
 
 // Take ownership of the pointer and register the benchmark. Return the
 // registered benchmark.
-BENCHMARK_EXPORT Benchmark* RegisterBenchmarkInternal(Benchmark*);
+BENCHMARK_EXPORT Benchmark* RegisterBenchmarkInternal(const std::string& family, Benchmark* bench);
 
 // Ensure that the standard streams are properly initialized in every TU.
 BENCHMARK_EXPORT int InitializeStreams();
@@ -1440,17 +1441,21 @@ class BENCHMARK_EXPORT Benchmark {
 // the specified functor 'fn'.
 //
 // RETURNS: A pointer to the registered benchmark.
-internal::Benchmark* RegisterBenchmark(const std::string& name,
+internal::Benchmark* RegisterBenchmark(const std::string& family, const std::string& name,
                                        internal::Function* fn);
 
 #if defined(BENCHMARK_HAS_CXX11)
 template <class Lambda>
-internal::Benchmark* RegisterBenchmark(const std::string& name, Lambda&& fn);
+internal::Benchmark* RegisterBenchmark(const std::string& family, const std::string& name, Lambda&& fn);
 #endif
 
-// Remove all registered benchmarks. All pointers to previously registered
+// Remove all registered benchmarks in the given family. All pointers to previously registered
 // benchmarks are invalidated.
-BENCHMARK_EXPORT void ClearRegisteredBenchmarks();
+BENCHMARK_EXPORT void ClearRegisteredBenchmarks(const std::string& family);
+
+// Remove all registered benchmarks in all families. All pointers to previously registered
+// benchmarks are invalidated.
+BENCHMARK_EXPORT void ClearAllRegisteredBenchmarks(void);
 
 namespace internal {
 // The class used to hold all Benchmarks created from static function.
@@ -1480,29 +1485,30 @@ class LambdaBenchmark : public Benchmark {
   LambdaBenchmark(LambdaBenchmark const&) = delete;
 
   template <class Lam>  // NOLINTNEXTLINE(readability-redundant-declaration)
-  friend Benchmark* ::benchmark::RegisterBenchmark(const std::string&, Lam&&);
+  friend Benchmark* ::benchmark::RegisterBenchmark(const std::string& family, const std::string& name, Lam&& f);
 
   Lambda lambda_;
 };
 #endif
 }  // namespace internal
 
-inline internal::Benchmark* RegisterBenchmark(const std::string& name,
+inline internal::Benchmark* RegisterBenchmark(const std::string& family,
+                                              const std::string& name,
                                               internal::Function* fn) {
   // FIXME: this should be a `std::make_unique<>()` but we don't have C++14.
   // codechecker_intentional [cplusplus.NewDeleteLeaks]
-  return internal::RegisterBenchmarkInternal(
+  return internal::RegisterBenchmarkInternal(family, 
       ::new internal::FunctionBenchmark(name, fn));
 }
 
 #ifdef BENCHMARK_HAS_CXX11
 template <class Lambda>
-internal::Benchmark* RegisterBenchmark(const std::string& name, Lambda&& fn) {
+internal::Benchmark* RegisterBenchmark(const std::string& family, const std::string& name, Lambda&& fn) {
   using BenchType =
       internal::LambdaBenchmark<typename std::decay<Lambda>::type>;
   // FIXME: this should be a `std::make_unique<>()` but we don't have C++14.
   // codechecker_intentional [cplusplus.NewDeleteLeaks]
-  return internal::RegisterBenchmarkInternal(
+  return internal::RegisterBenchmarkInternal(family,
       ::new BenchType(name, std::forward<Lambda>(fn)));
 }
 #endif
@@ -1510,9 +1516,9 @@ internal::Benchmark* RegisterBenchmark(const std::string& name, Lambda&& fn) {
 #if defined(BENCHMARK_HAS_CXX11) && \
     (!defined(BENCHMARK_GCC_VERSION) || BENCHMARK_GCC_VERSION >= 409)
 template <class Lambda, class... Args>
-internal::Benchmark* RegisterBenchmark(const std::string& name, Lambda&& fn,
+internal::Benchmark* RegisterBenchmark(const std::string& family, const std::string& name, Lambda&& fn,
                                        Args&&... args) {
-  return benchmark::RegisterBenchmark(
+  return benchmark::RegisterBenchmark(family, 
       name, [=](benchmark::State& st) { fn(st, args...); });
 }
 #else
@@ -1575,12 +1581,14 @@ class Fixture : public internal::Benchmark {
 #define BENCHMARK(...)                                               \
   BENCHMARK_PRIVATE_DECLARE(_benchmark_) =                           \
       (::benchmark::internal::RegisterBenchmarkInternal(             \
+          BENCHMARK_FAMILY_ID,                                       \
           new ::benchmark::internal::FunctionBenchmark(#__VA_ARGS__, \
                                                        __VA_ARGS__)))
 #else
 #define BENCHMARK(n)                                     \
   BENCHMARK_PRIVATE_DECLARE(n) =                         \
       (::benchmark::internal::RegisterBenchmarkInternal( \
+          BENCHMARK_FAMILY_ID,                           \
           new ::benchmark::internal::FunctionBenchmark(#n, n)))
 #endif  // BENCHMARK_HAS_CXX11
 
@@ -1608,6 +1616,7 @@ class Fixture : public internal::Benchmark {
 #define BENCHMARK_CAPTURE(func, test_case_name, ...)     \
   BENCHMARK_PRIVATE_DECLARE(_benchmark_) =               \
       (::benchmark::internal::RegisterBenchmarkInternal( \
+          BENCHMARK_FAMILY_ID,                           \
           new ::benchmark::internal::FunctionBenchmark(  \
               #func "/" #test_case_name,                 \
               [](::benchmark::State& st) { func(st, __VA_ARGS__); })))
@@ -1625,11 +1634,13 @@ class Fixture : public internal::Benchmark {
 #define BENCHMARK_TEMPLATE1(n, a)                        \
   BENCHMARK_PRIVATE_DECLARE(n) =                         \
       (::benchmark::internal::RegisterBenchmarkInternal( \
+          BENCHMARK_FAMILY_ID,                           \
           new ::benchmark::internal::FunctionBenchmark(#n "<" #a ">", n<a>)))
 
 #define BENCHMARK_TEMPLATE2(n, a, b)                                         \
   BENCHMARK_PRIVATE_DECLARE(n) =                                             \
       (::benchmark::internal::RegisterBenchmarkInternal(                     \
+          BENCHMARK_FAMILY_ID,                                               \
           new ::benchmark::internal::FunctionBenchmark(#n "<" #a "," #b ">", \
                                                        n<a, b>)))
 
@@ -1637,6 +1648,7 @@ class Fixture : public internal::Benchmark {
 #define BENCHMARK_TEMPLATE(n, ...)                       \
   BENCHMARK_PRIVATE_DECLARE(n) =                         \
       (::benchmark::internal::RegisterBenchmarkInternal( \
+          BENCHMARK_FAMILY_ID,                           \
           new ::benchmark::internal::FunctionBenchmark(  \
               #n "<" #__VA_ARGS__ ">", n<__VA_ARGS__>)))
 #else
@@ -1662,6 +1674,7 @@ class Fixture : public internal::Benchmark {
 #define BENCHMARK_TEMPLATE2_CAPTURE(func, a, b, test_case_name, ...) \
   BENCHMARK_PRIVATE_DECLARE(func) =                                  \
       (::benchmark::internal::RegisterBenchmarkInternal(             \
+          BENCHMARK_FAMILY_ID,                                       \
           new ::benchmark::internal::FunctionBenchmark(              \
               #func "<" #a "," #b ">"                                \
                     "/" #test_case_name,                             \
@@ -1743,7 +1756,7 @@ class Fixture : public internal::Benchmark {
 
 #define BENCHMARK_PRIVATE_REGISTER_F(TestName) \
   BENCHMARK_PRIVATE_DECLARE(TestName) =        \
-      (::benchmark::internal::RegisterBenchmarkInternal(new TestName()))
+      (::benchmark::internal::RegisterBenchmarkInternal(BENCHMARK_FAMILY_ID, new TestName()))
 
 // This macro will define and register a benchmark within a fixture class.
 #define BENCHMARK_F(BaseClass, Method)           \
@@ -1784,7 +1797,7 @@ class Fixture : public internal::Benchmark {
     }                                                                   \
     ::benchmark::Initialize(&argc, argv);                               \
     if (::benchmark::ReportUnrecognizedArguments(argc, argv)) return 1; \
-    ::benchmark::RunSpecifiedBenchmarks();                              \
+    ::benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, false);    \
     ::benchmark::Shutdown();                                            \
     return 0;                                                           \
   }                                                                     \
