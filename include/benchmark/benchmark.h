@@ -190,6 +190,7 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 #include <string>
 #include <utility>
 #include <vector>
+#include <memory>
 
 #include "gbenchmark/export.h"
 
@@ -372,8 +373,8 @@ BENCHMARK_EXPORT int32_t GetBenchmarkVerbosity();
 
 // Creates a default display reporter. Used by the library when no display
 // reporter is provided, but also made available for external use in case a
-// custom reporter should respect the `--benchmark_format` flag as a fallback
-BENCHMARK_EXPORT BenchmarkReporter* CreateDefaultDisplayReporter();
+// custom reporter should respect the `--benchmark_format` flag as a fallback.
+BENCHMARK_EXPORT std::unique_ptr<BenchmarkReporter> CreateDefaultDisplayReporter();
 
 // Generate a list of benchmarks matching the specified --benchmark_filter flag
 // and if --benchmark_list_tests is specified return after printing the name
