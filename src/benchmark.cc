@@ -699,6 +699,13 @@ void AddCustomContext(const std::string& key, const std::string& value) {
   }
 }
 
+void ClearAllCustomContext(void) {
+  if (internal::global_context != nullptr) {
+    delete internal::global_context;
+    internal::global_context = nullptr;
+  }
+}
+
 namespace internal {
 
 void (*HelperPrintf)();
@@ -836,7 +843,9 @@ void Initialize(int* argc, const char** argv, void (*HelperPrintf)()) {
   internal::LogLevel() = FLAGS_v;
 }
 
-void Shutdown() { delete internal::global_context; }
+void Shutdown() {
+  ClearAllCustomContext();
+}
 
 bool ReportUnrecognizedArguments(int argc, const char** argv) {
   for (int i = 1; i < argc; ++i) {

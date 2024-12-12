@@ -483,6 +483,10 @@ void RegisterProfilerManager(ProfilerManager* profiler_manager);
 BENCHMARK_EXPORT
 void AddCustomContext(const std::string& key, const std::string& value);
 
+// Nuke the context stanza: clear all key-value pairs stored in there via AddCustomContext()
+BENCHMARK_EXPORT
+void ClearAllCustomContext(void);
+
 namespace internal {
 class Benchmark;
 class BenchmarkImp;
@@ -1951,7 +1955,7 @@ class BENCHMARK_EXPORT BenchmarkReporter {
     // How many runs have happened already?
     int num_runs_done;
 
-    // The reports about (non-errneous!) runs of this family.
+    // The reports about (non-erroneous!) runs of this family.
     std::vector<BenchmarkReporter::Run> Runs;
   };
 

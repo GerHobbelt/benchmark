@@ -146,8 +146,7 @@ TEST(AddCustomContext, Simple) {
               testing::UnorderedElementsAre(testing::Pair("foo", "bar"),
                                             testing::Pair("baz", "qux")));
 
-  delete global_context;
-  global_context = nullptr;
+  ClearAllCustomContext();
 }
 
 TEST(AddCustomContext, DuplicateKey) {
@@ -160,8 +159,7 @@ TEST(AddCustomContext, DuplicateKey) {
   EXPECT_THAT(*global_context,
               testing::UnorderedElementsAre(testing::Pair("foo", "bar")));
 
-  delete global_context;
-  global_context = nullptr;
+  ClearAllCustomContext();
 }
 
 }  // namespace
