@@ -199,6 +199,7 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
+#include <functional>
 #endif
 
 #if defined(_MSC_VER)
@@ -756,15 +757,19 @@ typedef double(BigOFunc)(ComplexityN);
 
 // StatisticsFunc is passed to a benchmark in order to compute some descriptive
 // statistics over all the measurements of some type
-typedef double(StatisticsFunc)(const std::vector<double>&);
+#ifdef BENCHMARK_HAS_CXX11
+typedef std::function<double(const std::vector<double>&)> StatisticsFunc;
+#else
+typedef double(*StatisticsFunc)(const std::vector<double>&);
+#endif
 
 namespace internal {
 struct Statistics {
   std::string name_;
-  StatisticsFunc* compute_;
+  StatisticsFunc compute_;
   StatisticUnit unit_;
 
-  Statistics(const std::string& name, StatisticsFunc* compute,
+  Statistics(const std::string& name, StatisticsFunc compute,
              StatisticUnit unit = kTime)
       : name_(name), compute_(compute), unit_(unit) {}
 };
@@ -1347,7 +1352,7 @@ class BENCHMARK_EXPORT Benchmark {
 
   // Add this statistics to be computed over all the values of benchmark run
   Benchmark* ComputeStatistics(const std::string& name,
-                               StatisticsFunc* statistics,
+                               StatisticsFunc statistics,
                                StatisticUnit unit = kTime);
 
   // Support for running multiple copies of the same benchmark concurrently
