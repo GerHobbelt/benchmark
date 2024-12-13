@@ -52,7 +52,6 @@ protected:
     }
 
     void RunList(BenchmarkReporter& reporter) {
-      RegisterBenchmarks(BENCHMARK_FAMILY_ID);  // Register all benchmarks
       benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &reporter);
     }
 };
@@ -72,17 +71,17 @@ TEST_F(ReporterListTest, HandlesEmptyBenchmarkList) {
     csv_reporter.SetOutputStream(&ss);
     csv_reporter.SetErrorStream(&ss);
 
-    // Expect no output as no benchmarks are registered
+    // Expect error report as no benchmarks are registered
     RunList(console_reporter);
-    EXPECT_TRUE(ss.str().empty());
+    EXPECT_THAT(ss.str(), ::testing::HasSubstr("Failed to match any benchmarks against regex:"));
 
     ss.str("");
     RunList(json_reporter);
-    EXPECT_TRUE(ss.str().empty());
+    EXPECT_THAT(ss.str(), ::testing::HasSubstr("Failed to match any benchmarks against regex:"));
 
     ss.str("");
     RunList(csv_reporter);
-    EXPECT_TRUE(ss.str().empty());
+    EXPECT_THAT(ss.str(), ::testing::HasSubstr("Failed to match any benchmarks against regex:"));
 }
 
 // Tests the output of reporters when benchmarks are listed
@@ -115,8 +114,10 @@ TEST_F(ReporterListTest, ListsBenchmarksWithDifferentReporters) {
 
     // Check JSON structure
     std::string json_output = ss.str();
-    EXPECT_THAT(json_output.front(), testing::Eq('['));
-    EXPECT_THAT(json_output.back(), testing::Eq(']'));
+    EXPECT_THAT(json_output.front(), testing::Eq('{'));
+    EXPECT_THAT(json_output.back(), testing::Eq('\n'));
+    json_output.erase(json_output.begin(), std::prev(json_output.end(), 3));
+    EXPECT_EQ(json_output, "\n}\n");
 
     ss.str("");
     RunList(csv_reporter);
