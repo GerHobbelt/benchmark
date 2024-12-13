@@ -15,8 +15,9 @@
 
 #include "monolithic_examples.h"
 
-
 #define BENCHMARK_FAMILY_ID   "diagnostics_tests"
+
+#ifndef NDEBUG
 
 #if defined(__GNUC__) && !defined(__EXCEPTIONS)
 #define TEST_HAS_NO_EXCEPTIONS
@@ -79,6 +80,8 @@ void BM_diagnostic_test_keep_running(benchmark::State& state) {
   called_once = true;
 }
 BENCHMARK(BM_diagnostic_test_keep_running);
+
+#endif // NDEBUG
 
 
 
