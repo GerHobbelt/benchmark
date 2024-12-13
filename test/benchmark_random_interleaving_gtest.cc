@@ -63,16 +63,21 @@ class BenchmarkTest : public testing::Test {
   }
 
   // make sure we backup & recover the FLAGS_benchmark_filter setting which is changed in the Execute() call above!
+	// ditto for the global FLAGS_benchmark_repetitions setting which is tweaked in some of these tests below!
+
   void SetUp() override {
 		old_filter_setting_ = FLAGS_benchmark_filter;
+    old_repetitions_ = FLAGS_benchmark_repetitions;
 	}
 
   void TearDown() override {
 		FLAGS_benchmark_filter = old_filter_setting_;
-	}
+    FLAGS_benchmark_repetitions = old_repetitions_;
+  }
 	
 private:
-	std::string old_filter_setting_;	
+	std::string old_filter_setting_;
+  int32_t old_repetitions_;
 };
 
 void BM_Match1(benchmark::State& state) {
