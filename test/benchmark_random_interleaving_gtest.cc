@@ -61,6 +61,18 @@ class BenchmarkTest : public testing::Test {
 
     queue->Put("DONE");  // End marker
   }
+
+  // make sure we backup & recover the FLAGS_benchmark_filter setting which is changed in the Execute() call above!
+  void SetUp() override {
+		old_filter_setting_ = FLAGS_benchmark_filter;
+	}
+
+  void TearDown() override {
+		FLAGS_benchmark_filter = old_filter_setting_;
+	}
+	
+private:
+	std::string old_filter_setting_;	
 };
 
 void BM_Match1(benchmark::State& state) {
