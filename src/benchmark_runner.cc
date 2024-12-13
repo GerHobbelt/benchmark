@@ -395,7 +395,7 @@ bool BenchmarkRunner::HasSufficientTimeToApply(
   return i.seconds >= GetMinTimeToApply() ||
          // CPU time is specified but the elapsed real time greatly exceeds
          // the minimum time.
-         // Note that user provided timers are except from this test.
+         // Note that user provided timers are exempt from this test.
          (!b.use_manual_time() &&
           i.results.real_time_used >= 5 * GetMinTimeToApply() * b.threads());
 }

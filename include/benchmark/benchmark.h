@@ -954,10 +954,8 @@ class BENCHMARK_EXPORT BENCHMARK_INTERNAL_CACHELINE_ALIGNED State {
   }
 
   // If this routine is called with complexity_n > 0 and complexity report is
-  // requested for the
-  // family benchmark, then current benchmark will be part of the computation
-  // and complexity_n will
-  // represent the length of N.
+  // requested for the family benchmark, then current benchmark will be part
+	// of the computation and complexity_n will represent the length of N.
   BENCHMARK_ALWAYS_INLINE
   void SetComplexityN(ComplexityN complexity_n) {
     complexity_n_ = complexity_n;
@@ -1032,7 +1030,7 @@ class BENCHMARK_EXPORT BENCHMARK_INTERNAL_CACHELINE_ALIGNED State {
   std::string name() const { return name_; }
 
  private:
-  // items we expect on the first cache line (ie 64 bytes of the struct)
+  // items we expect on the first cache line (i.e. 64 bytes of the struct)
   // When total_iterations_ is 0, KeepRunning() and friends will return false.
   // May be larger than max_iterations.
   IterationCount total_iterations_;
@@ -1096,7 +1094,7 @@ inline BENCHMARK_ALWAYS_INLINE bool State::KeepRunningBatch(IterationCount n) {
 inline BENCHMARK_ALWAYS_INLINE bool State::KeepRunningInternal(IterationCount n,
                                                                bool is_batch) {
   // total_iterations_ is set to 0 by the constructor, and always set to a
-  // nonzero value by StartKepRunning().
+  // nonzero value by StartKeepRunning().
   assert(n > 0);
   // n must be 1 unless is_batch is true.
   assert(is_batch || n == 1);
