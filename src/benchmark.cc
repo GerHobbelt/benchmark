@@ -467,7 +467,9 @@ void RunBenchmarks(const std::vector<BenchmarkInstance>& benchmarks,
     for (size_t repetition_index : repetition_indices) {
       internal::BenchmarkRunner& runner = runners[repetition_index];
       runner.DoOneRepetition();
-      if (runner.HasRepeatsRemaining()) continue;
+      // FIXME: prematurely exit this loop when the time taken is beyond a specified maximum; adjust the repeat counts accordingly.
+      if (runner.HasRepeatsRemaining())
+				continue;
       // FIXME: report each repetition separately, not all of them in bulk.
 
       display_reporter->ReportRunsConfig(
