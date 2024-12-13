@@ -651,8 +651,7 @@ size_t RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* disp
   }
 
   if (FLAGS_benchmark_list_tests) {
-    for (auto const& benchmark : benchmarks)
-      Out << benchmark.name().str() << "\n";
+    display_reporter->List(benchmarks);
   } else {
     internal::RunBenchmarks(benchmarks, display_reporter, file_reporter);
   }
