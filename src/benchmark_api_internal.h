@@ -74,7 +74,7 @@ class BenchmarkInstance {
   callback_function teardown_ = nullptr;
 };
 
-bool FindBenchmarksInternal(const std::string& family, const std::string& re,
+bool FindBenchmarksInternal(const std::string& family_filter, const std::string& re,
                             std::vector<BenchmarkInstance>* benchmarks,
                             std::ostream* Err);
 

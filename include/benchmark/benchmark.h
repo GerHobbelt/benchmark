@@ -186,20 +186,20 @@ BENCHMARK(BM_test)->Unit(benchmark::kMillisecond);
 #include <iosfwd>
 #include <limits>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <utility>
 #include <vector>
-#include <memory>
 
 #include "gbenchmark/export.h"
 
 #if defined(BENCHMARK_HAS_CXX11)
 #include <atomic>
+#include <functional>
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
-#include <functional>
 #endif
 
 #if defined(_MSC_VER)
@@ -374,7 +374,7 @@ BENCHMARK_EXPORT int32_t GetBenchmarkVerbosity();
 
 // Creates a default display reporter. Used by the library when no display
 // reporter is provided, but also made available for external use in case a
-// custom reporter should respect the `--benchmark_format` flag as a fallback.
+// custom reporter should respect the `--benchmark_format` flag as a fall-back.
 BENCHMARK_EXPORT std::unique_ptr<BenchmarkReporter> CreateDefaultDisplayReporter();
 
 // Generate a list of benchmarks matching the specified --benchmark_filter flag
@@ -393,19 +393,19 @@ BENCHMARK_EXPORT std::unique_ptr<BenchmarkReporter> CreateDefaultDisplayReporter
 //  'file_reporter' is ignored.
 //
 // RETURNS: The number of matching benchmarks.
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, bool dummy);     // dummy to catch collision with old API: those should use the (family, spec) call instead!
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, const std::string &spec);
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, const char* spec);
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family_filter, bool dummy);     // dummy to catch collision with old API: those should use the (family, spec) call instead!
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family_filter, const std::string &spec);
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family_filter, const char* spec);
 
 BENCHMARK_EXPORT size_t
-RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter);
+RunSpecifiedBenchmarks(const std::string& family_filter, BenchmarkReporter* display_reporter);
 BENCHMARK_EXPORT size_t
-RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter, const std::string &spec);
+RunSpecifiedBenchmarks(const std::string& family_filter, BenchmarkReporter* display_reporter, const std::string &spec);
 
-BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family, 
+BENCHMARK_EXPORT size_t RunSpecifiedBenchmarks(const std::string& family_filter, 
     BenchmarkReporter* display_reporter, BenchmarkReporter* file_reporter);
 BENCHMARK_EXPORT size_t
-RunSpecifiedBenchmarks(const std::string& family, BenchmarkReporter* display_reporter,
+RunSpecifiedBenchmarks(std::string family_filter, BenchmarkReporter* display_reporter,
                        BenchmarkReporter* file_reporter, std::string spec);
 
 // TimeUnit is passed to a benchmark in order to specify the order of magnitude
@@ -486,7 +486,8 @@ void RegisterProfilerManager(ProfilerManager* profiler_manager);
 BENCHMARK_EXPORT
 void AddCustomContext(const std::string& key, const std::string& value);
 
-// Nuke the context stanza: clear all key-value pairs stored in there via AddCustomContext()
+// Nuke the context stanza: clear all key-value pairs stored in there via
+// AddCustomContext()
 BENCHMARK_EXPORT
 void ClearAllCustomContext(void);
 
@@ -760,7 +761,7 @@ typedef double(BigOFunc)(ComplexityN);
 #ifdef BENCHMARK_HAS_CXX11
 typedef std::function<double(const std::vector<double>&)> StatisticsFunc;
 #else
-typedef double(*StatisticsFunc)(const std::vector<double>&);
+typedef double (*StatisticsFunc)(const std::vector<double>&);
 #endif
 
 namespace internal {
@@ -955,7 +956,7 @@ class BENCHMARK_EXPORT BENCHMARK_INTERNAL_CACHELINE_ALIGNED State {
 
   // If this routine is called with complexity_n > 0 and complexity report is
   // requested for the family benchmark, then current benchmark will be part
-	// of the computation and complexity_n will represent the length of N.
+  // of the computation and complexity_n will represent the length of N.
   BENCHMARK_ALWAYS_INLINE
   void SetComplexityN(ComplexityN complexity_n) {
     complexity_n_ = complexity_n;
@@ -1453,12 +1454,12 @@ template <class Lambda>
 internal::Benchmark* RegisterBenchmark(const std::string& family, const std::string& name, Lambda&& fn);
 #endif
 
-// Remove all registered benchmarks in the given family. All pointers to previously registered
-// benchmarks are invalidated.
+// Remove all registered benchmarks in the given family. All pointers to
+// previously registered benchmarks are invalidated.
 BENCHMARK_EXPORT void ClearRegisteredBenchmarks(const std::string& family);
 
-// Remove all registered benchmarks in all families. All pointers to previously registered
-// benchmarks are invalidated.
+// Remove all registered benchmarks in all families. All pointers to previously
+// registered benchmarks are invalidated.
 BENCHMARK_EXPORT void ClearAllRegisteredBenchmarks(void);
 
 namespace internal {
@@ -1501,8 +1502,8 @@ inline internal::Benchmark* RegisterBenchmark(const std::string& family,
                                               internal::Function* fn) {
   // FIXME: this should be a `std::make_unique<>()` but we don't have C++14.
   // codechecker_intentional [cplusplus.NewDeleteLeaks]
-  return internal::RegisterBenchmarkInternal(family, 
-      ::new internal::FunctionBenchmark(name, fn));
+  return internal::RegisterBenchmarkInternal(
+      family, ::new internal::FunctionBenchmark(name, fn));
 }
 
 #ifdef BENCHMARK_HAS_CXX11
@@ -1512,8 +1513,8 @@ internal::Benchmark* RegisterBenchmark(const std::string& family, const std::str
       internal::LambdaBenchmark<typename std::decay<Lambda>::type>;
   // FIXME: this should be a `std::make_unique<>()` but we don't have C++14.
   // codechecker_intentional [cplusplus.NewDeleteLeaks]
-  return internal::RegisterBenchmarkInternal(family,
-      ::new BenchType(name, std::forward<Lambda>(fn)));
+  return internal::RegisterBenchmarkInternal(
+      family, ::new BenchType(name, std::forward<Lambda>(fn)));
 }
 #endif
 
@@ -1522,8 +1523,8 @@ internal::Benchmark* RegisterBenchmark(const std::string& family, const std::str
 template <class Lambda, class... Args>
 internal::Benchmark* RegisterBenchmark(const std::string& family, const std::string& name, Lambda&& fn,
                                        Args&&... args) {
-  return benchmark::RegisterBenchmark(family, 
-      name, [=](benchmark::State& st) { fn(st, args...); });
+  return benchmark::RegisterBenchmark(
+      family, name, [=](benchmark::State& st) { fn(st, args...); });
 }
 #else
 #define BENCHMARK_HAS_NO_VARIADIC_REGISTER_BENCHMARK
@@ -1758,9 +1759,10 @@ class Fixture : public internal::Benchmark {
 #define BENCHMARK_REGISTER_F(BaseClass, Method) \
   BENCHMARK_PRIVATE_REGISTER_F(BENCHMARK_PRIVATE_CONCAT_NAME(BaseClass, Method))
 
-#define BENCHMARK_PRIVATE_REGISTER_F(TestName) \
-  BENCHMARK_PRIVATE_DECLARE(TestName) =        \
-      (::benchmark::internal::RegisterBenchmarkInternal(BENCHMARK_FAMILY_ID, new TestName()))
+#define BENCHMARK_PRIVATE_REGISTER_F(TestName)                               \
+  BENCHMARK_PRIVATE_DECLARE(TestName) =                                      \
+      (::benchmark::internal::RegisterBenchmarkInternal(BENCHMARK_FAMILY_ID, \
+                                                        new TestName()))
 
 // This macro will define and register a benchmark within a fixture class.
 #define BENCHMARK_F(BaseClass, Method)           \

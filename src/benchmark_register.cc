@@ -90,7 +90,12 @@ class BenchmarkFamilies {
   // regular expression.
   bool FindBenchmarks(std::string re,
                       std::vector<BenchmarkInstance>* benchmarks,
-                      std::ostream* Err);
+                      std::ostream* Err) const;
+
+  static bool FindBenchmarks(std::string family_filter,
+                             const std::string& re,
+                             std::vector<BenchmarkInstance>* benchmarks,
+                             std::ostream* Err);
 
   BenchmarkFamilies() = default;
 
@@ -98,14 +103,14 @@ private:
   static std::map<std::string, BenchmarkFamilies>* instances_;
 
   std::vector<std::unique_ptr<Benchmark>> families_;
-  Mutex mutex_;
+  mutable Mutex mutex_;
 };
 
-std::string DefaultActiveBenchmarkFamily("gbenchmark");
-
+Mutex instances_mutex_;
 std::map<std::string, BenchmarkFamilies>* BenchmarkFamilies::instances_ = nullptr;
 
 BenchmarkFamilies* BenchmarkFamilies::GetInstance(const std::string& family) {
+  MutexLock l(instances_mutex_);
   if (instances_ == nullptr) {
     instances_ = new std::map<std::string, BenchmarkFamilies>();
   }
@@ -143,7 +148,7 @@ void BenchmarkFamilies::ClearBenchmarks() {
 
 bool BenchmarkFamilies::FindBenchmarks(
     std::string spec, std::vector<BenchmarkInstance>* benchmarks,
-    std::ostream* ErrStream) {
+    std::ostream* ErrStream) const {
   BM_CHECK(ErrStream);
   auto& Err = *ErrStream;
   // Make regular expression out of command-line flag
@@ -165,7 +170,7 @@ bool BenchmarkFamilies::FindBenchmarks(
   int next_family_index = 0;
 
   MutexLock l(mutex_);
-  for (std::unique_ptr<Benchmark>& family : families_) {
+  for (const std::unique_ptr<Benchmark>& family : families_) {
     int family_index = next_family_index;
     int per_family_instance_index = 0;
 
@@ -215,6 +220,46 @@ bool BenchmarkFamilies::FindBenchmarks(
   return true;
 }
 
+bool BenchmarkFamilies::FindBenchmarks(std::string family_filter,
+	  const std::string& benchmark_re, std::vector<BenchmarkInstance>* benchmarks,
+	  std::ostream* ErrStream) {
+  BM_CHECK(ErrStream);
+  auto& Err = *ErrStream;
+
+  // Make regular expression out of command-line flag
+  std::string error_msg;
+  Regex re;
+  bool is_negative_filter = false;
+  if (family_filter[0] == '-') {
+    family_filter.replace(0, 1, "");
+    is_negative_filter = true;
+  }
+  if (!re.Init(family_filter, &error_msg)) {
+    Err << "Could not compile benchmark family re: " << error_msg << std::endl;
+    return false;
+  }
+
+	bool rv = false;
+  MutexLock l(instances_mutex_);
+  if (instances_ != nullptr) {
+    for (auto it = instances_->cbegin(); it != instances_->cend(); it++) {
+      const std::string& full_name = it->first;
+      const BenchmarkFamilies& family = it->second;
+
+      if (full_name.rfind(kDisabledPrefix, 0) != 0 &&
+          ((re.Match(full_name) && !is_negative_filter) ||
+           (!re.Match(full_name) && is_negative_filter))) {
+        if (!family.FindBenchmarks(benchmark_re, benchmarks, ErrStream))
+          return false;
+        rv = true;
+      }
+    }
+  }
+  if (!rv)
+    Err << "Failed to match any benchmark families against regex: " << family_filter << std::endl;
+  return rv;
+}
+
 Benchmark* RegisterBenchmarkInternal(const std::string& family, Benchmark* bench) {
   std::unique_ptr<Benchmark> bench_ptr(bench);
   BenchmarkFamilies* families = BenchmarkFamilies::GetInstance(family);
@@ -224,10 +269,10 @@ Benchmark* RegisterBenchmarkInternal(const std::string& family, Benchmark* bench
 
 // FIXME: This function is a hack so that benchmark.cc can access
 // `BenchmarkFamilies`
-bool FindBenchmarksInternal(const std::string& family, const std::string& re,
+bool FindBenchmarksInternal(const std::string& family_filter, const std::string& benchmark_re,
                             std::vector<BenchmarkInstance>* benchmarks,
                             std::ostream* Err) {
-  return BenchmarkFamilies::GetInstance(family)->FindBenchmarks(re, benchmarks, Err);
+  return BenchmarkFamilies::FindBenchmarks(family_filter, benchmark_re, benchmarks, Err);
 }
 
 //=============================================================================//
