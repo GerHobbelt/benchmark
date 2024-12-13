@@ -704,8 +704,6 @@ class Counter {
     kAvgIterations = 1 << 3,
     // Mark the counter as a iteration-average rate. See above.
     kAvgIterationsRate = kIsRate | kAvgIterations,
-    // Pure result, do not format in any way
-    kResultNoFormat = 1U << 4U,
 
     // In the end, invert the result. This is always done last!
     kInvert = 1 << 31
@@ -721,11 +719,10 @@ class Counter {
   double value;
   Flags flags;
   OneK oneK;
-  bool human_readable;
 
   BENCHMARK_ALWAYS_INLINE
   Counter(double v = 0., Flags f = kDefaults, OneK k = kIs1000)
-      : value(v), flags(f), oneK(k), human_readable(false) {}
+      : value(v), flags(f), oneK(k) {}
 
   BENCHMARK_ALWAYS_INLINE operator double const &() const { return value; }
   BENCHMARK_ALWAYS_INLINE operator double&() { return value; }
@@ -1006,8 +1003,6 @@ class BENCHMARK_EXPORT BENCHMARK_INTERNAL_CACHELINE_ALIGNED State {
     assert(range_.size() > pos);
     return range_[pos];
   }
-
-  size_t argn() const { return range_.size(); }
 
   BENCHMARK_DEPRECATED_MSG("use 'range(0)' instead")
   int64_t range_x() const { return range(0); }
