@@ -19,7 +19,7 @@
 #include "monolithic_examples.h"
 
 
-#define BENCHMARK_FAMILY_ID "gbenchmark_null_tests"
+#define BENCHMARK_FAMILY_ID    "."    // SELECT & RUN ALL OF 'EM!
 
 
 #if defined(BUILD_MONOLITHIC)
