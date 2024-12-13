@@ -17,15 +17,17 @@
 #include <sstream>
 #include "benchmark/benchmark.h"
 
+#define BENCHMARK_FAMILY_ID "register_list_gtests"
+
 namespace benchmark {
 namespace internal {
 
 // Helper function to register benchmarks
-void RegisterBenchmarks() {
-    benchmark::RegisterBenchmark("BM_simple", [](benchmark::State& state) {
+void RegisterBenchmarks(const std::string& family) {
+    benchmark::RegisterBenchmark(family, "BM_simple", [](benchmark::State& state) {
         for (auto _ : state) {}
     });
-    benchmark::RegisterBenchmark("BM_complex", [](benchmark::State& state) {
+    benchmark::RegisterBenchmark(family, "BM_complex", [](benchmark::State& state) {
             for (auto _ : state) {
         // Simulating a complex operation
         for (int i = 0; i < 1000; ++i) {
@@ -33,7 +35,7 @@ void RegisterBenchmarks() {
         }
     }
     });
-    benchmark::RegisterBenchmark("BM_special_chars", [](benchmark::State& state) {
+    benchmark::RegisterBenchmark(family, "BM_special_chars", [](benchmark::State& state) {
         for (auto _ : state) {}
     })->Name("BM_special!@#");
 }
@@ -44,22 +46,31 @@ protected:
     BenchmarkReporter::Context context;
 
     void SetUp() override {
-        benchmark::ClearRegisteredBenchmarks();
+      benchmark::ClearRegisteredBenchmarks(BENCHMARK_FAMILY_ID);
         ss.str("");
         ss.clear();
     }
 
     void RunList(BenchmarkReporter& reporter) {
-        RegisterBenchmarks(); // Register all benchmarks
-        benchmark::RunSpecifiedBenchmarks(&reporter);
+      RegisterBenchmarks(BENCHMARK_FAMILY_ID);  // Register all benchmarks
+      benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &reporter);
     }
 };
 
 // Tests the behavior of reporters when no benchmarks are registered
 TEST_F(ReporterListTest, HandlesEmptyBenchmarkList) {
-    benchmark::ConsoleReporter console_reporter(&ss);
-    benchmark::JSONReporter json_reporter(&ss);
-    benchmark::CSVReporter csv_reporter(&ss);
+    benchmark::ConsoleReporter console_reporter;
+    benchmark::JSONReporter json_reporter;
+    benchmark::CSVReporter csv_reporter;
+
+    console_reporter.SetOutputStream(&ss);
+    console_reporter.SetErrorStream(&ss);
+
+    json_reporter.SetOutputStream(&ss);
+    json_reporter.SetErrorStream(&ss);
+
+    csv_reporter.SetOutputStream(&ss);
+    csv_reporter.SetErrorStream(&ss);
 
     // Expect no output as no benchmarks are registered
     RunList(console_reporter);
@@ -76,11 +87,20 @@ TEST_F(ReporterListTest, HandlesEmptyBenchmarkList) {
 
 // Tests the output of reporters when benchmarks are listed
 TEST_F(ReporterListTest, ListsBenchmarksWithDifferentReporters) {
-    benchmark::ConsoleReporter console_reporter(&ss);
-    benchmark::JSONReporter json_reporter(&ss);
-    benchmark::CSVReporter csv_reporter(&ss);
+    benchmark::ConsoleReporter console_reporter;
+    benchmark::JSONReporter json_reporter;
+    benchmark::CSVReporter csv_reporter;
 
-    RegisterBenchmarks(); // Ensure some benchmarks are registered
+    console_reporter.SetOutputStream(&ss);
+    console_reporter.SetErrorStream(&ss);
+
+    json_reporter.SetOutputStream(&ss);
+    json_reporter.SetErrorStream(&ss);
+
+    csv_reporter.SetOutputStream(&ss);
+    csv_reporter.SetErrorStream(&ss);
+
+    RegisterBenchmarks(BENCHMARK_FAMILY_ID); // Ensure some benchmarks are registered
 
     RunList(console_reporter);
     EXPECT_THAT(ss.str(), ::testing::HasSubstr("BM_simple"));
@@ -96,7 +116,7 @@ TEST_F(ReporterListTest, ListsBenchmarksWithDifferentReporters) {
     // Check JSON structure
     std::string json_output = ss.str();
     EXPECT_THAT(json_output.front(), testing::Eq('['));
-    EXPECT_THAT(json_output.back(), testing::Eq(']'))
+    EXPECT_THAT(json_output.back(), testing::Eq(']'));
 
     ss.str("");
     RunList(csv_reporter);
