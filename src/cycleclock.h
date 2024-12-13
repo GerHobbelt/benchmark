@@ -29,6 +29,11 @@
 #if defined(BENCHMARK_OS_MACOSX)
 #include <mach/mach_time.h>
 #endif
+
+#if defined(BENCHMARK_MACOS_AARCH64)
+#include "macOS_aarch64_cpmu.h"
+#endif
+
 // For MSVC, we want to use '_asm rdtsc' when possible (since it works
 // with even ancient MSVC compilers), and when not possible the
 // __rdtsc intrinsic, declared in <intrin.h>.  Unfortunately, in some
@@ -52,15 +57,30 @@ extern "C" uint64_t __rdtsc();
 #endif
 
 namespace benchmark {
+
 // NOTE: only i386 and x86_64 have been well tested.
 // PPC, sparc, alpha, and ia64 are based on
 //    http://peter.kuscsik.com/wordpress/?p=14
 // with modifications by m3b.  See also
 //    https://setisvn.ssl.berkeley.edu/svn/lib/fftw-3.0.1/kernel/cycle.h
+
+namespace internal {
+// Sets up CPU cyclecount functionality.
+// Some platforms (like MacOS) need to perform initial setup to make
+// counting of CPU cycles possible.
+void InitializeCyclecount();
+}  // namespace internal
+
 namespace cycleclock {
+// Returns false if library was not able to initialize CPU cyclecount
+// functionality, otherwise true.
+bool IsCycleClockEnabled();
+
 // This should return the number of cycles since power-on.  Thread-safe.
 inline BENCHMARK_ALWAYS_INLINE int64_t Now() {
-#if defined(BENCHMARK_OS_MACOSX)
+#if defined(BENCHMARK_MACOS_AARCH64)
+  return internal::macOS_rdtsc();
+#elif defined(BENCHMARK_OS_MACOSX)
   // this goes at the top because we need ALL Macs, regardless of
   // architecture, to return the number of "mach time units" that
   // have passed since startup.  See sysinfo.cc where
@@ -140,13 +160,22 @@ inline BENCHMARK_ALWAYS_INLINE int64_t Now() {
   clock_gettime(CLOCK_MONOTONIC, &ts);
   return static_cast<int64_t>(ts.tv_sec) * 1000000000 + ts.tv_nsec;
 #elif defined(__aarch64__)
-  // System timer of ARMv8 runs at a different frequency than the CPU's.
-  // The frequency is fixed, typically in the range 1-50MHz.  It can be
-  // read at CNTFRQ special register.  We assume the OS has set up
-  // the virtual timer properly.
-  int64_t virtual_timer_value;
-  asm volatile("mrs %0, cntvct_el0" : "=r"(virtual_timer_value));
-  return virtual_timer_value;
+  uint64_t pmuseren;
+  asm volatile("MRS %0, pmuserenr_el0" : "=r"(pmuseren));
+  if (pmuseren & 1) {
+    // Use PMU counters which allows reading PMU counters from user mode code
+    int64_t pmccntr;
+    asm volatile("MRS %0, pmccntr_el0" : "=r"(pmccntr));
+    return pmccntr;
+  } else {
+    // System timer of ARMv8 runs at a different frequency than the CPU's.
+    // The frequency is fixed, typically in the range 1-50MHz.  It can be
+    // read at CNTFRQ special register.  We assume the OS has set up
+    // the virtual timer properly.
+    int64_t virtual_timer_value;
+    asm volatile("mrs %0, cntvct_el0" : "=r"(virtual_timer_value));
+    return virtual_timer_value;
+  }
 #elif defined(__ARM_ARCH)
   // V6 is the earliest arch that has a standard cyclecount
   // Native Client validator doesn't allow MRC instructions.

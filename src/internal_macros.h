@@ -62,6 +62,9 @@
     #if defined(TARGET_OS_IPHONE)
       #define BENCHMARK_OS_IOS 1
     #endif
+    #if defined(__aarch64__)
+      #define BENCHMARK_MACOS_AARCH64 1
+    #endif
   #endif
 #elif defined(__FreeBSD__)
   #define BENCHMARK_OS_FREEBSD 1
