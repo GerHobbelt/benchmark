@@ -153,11 +153,11 @@ ValueUnion GetSysctlImp(std::string const& name) {
   int mib[2];
 
   mib[0] = CTL_HW;
-  if ((name == "hw.ncpu") || (name == "hw.cpuspeed")) {
+  if ((name == "hw.ncpuonline") || (name == "hw.cpuspeed")) {
     ValueUnion buff(sizeof(int));
 
-    if (name == "hw.ncpu") {
-      mib[1] = HW_NCPU;
+    if (name == "hw.ncpuonline") {
+      mib[1] = HW_NCPUONLINE;
     } else {
       mib[1] = HW_CPUSPEED;
     }
@@ -480,11 +480,7 @@ std::string GetSystemName() {
 }
 
 int GetNumCPUsImpl() {
-#ifdef BENCHMARK_HAS_SYSCTL
-  int num_cpu = -1;
-  if (GetSysctl("hw.ncpu", &num_cpu)) return num_cpu;
-  PrintErrorAndDie("Err: ", strerror(errno));
-#elif defined(BENCHMARK_OS_WINDOWS)
+#ifdef BENCHMARK_OS_WINDOWS
   SYSTEM_INFO sysinfo;
   // Use memset as opposed to = {} to avoid GCC missing initializer false
   // positives.
@@ -492,14 +488,6 @@ int GetNumCPUsImpl() {
   GetSystemInfo(&sysinfo);
   // number of logical processors in the current group
   return static_cast<int>(sysinfo.dwNumberOfProcessors);
-#elif defined(__linux__) || defined(BENCHMARK_OS_SOLARIS)
-  // Returns -1 in case of a failure.
-  int num_cpu = static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
-  if (num_cpu < 0) {
-    PrintErrorAndDie("sysconf(_SC_NPROCESSORS_ONLN) failed with error: ",
-                     strerror(errno));
-  }
-  return num_cpu;
 #elif defined(BENCHMARK_OS_QNX)
   return static_cast<int>(_syspage_ptr->num_cpu);
 #elif defined(BENCHMARK_OS_QURT)
@@ -508,6 +496,75 @@ int GetNumCPUsImpl() {
     hardware_threads.max_hthreads = 1;
   }
   return hardware_threads.max_hthreads;
+#elif defined(BENCHMARK_HAS_SYSCTL)
+  int num_cpu = -1;
+  constexpr auto* hwncpu =
+#if defined BENCHMARK_OS_MACOSX
+      "hw.logicalcpu";
+#elif defined(HW_NCPUONLINE)
+      "hw.ncpuonline";
+#else
+      "hw.ncpu";
+#endif
+  if (GetSysctl(hwncpu, &num_cpu)) return num_cpu;
+  PrintErrorAndDie("Err: ", strerror(errno));
+#elif defined(_SC_NPROCESSORS_ONLN)
+  // Returns -1 in case of a failure.
+  int num_cpu = static_cast<int>(sysconf(_SC_NPROCESSORS_ONLN));
+  if (num_cpu < 0) {
+    PrintErrorAndDie("sysconf(_SC_NPROCESSORS_ONLN) failed with error: ",
+                     strerror(errno));
+  }
+  return num_cpu;
+#else
+  // Fallback for platforms (such as WASM) that aren't covered above.
+  int num_cpus = 0;
+  int max_id = -1;
+  std::ifstream f("/proc/cpuinfo");
+  if (!f.is_open()) {
+    std::cerr << "Failed to open /proc/cpuinfo\n";
+    return -1;
+  }
+#if defined(__alpha__)
+  const std::string Key = "cpus detected";
+#else
+  const std::string Key = "processor";
+#endif
+  std::string ln;
+  while (std::getline(f, ln)) {
+    if (ln.empty()) continue;
+    std::size_t split_idx = ln.find(':');
+    std::string value;
+#if defined(__s390__)
+    // s390 has another format in /proc/cpuinfo
+    // it needs to be parsed differently
+    if (split_idx != std::string::npos)
+      value = ln.substr(Key.size() + 1, split_idx - Key.size() - 1);
+#else
+    if (split_idx != std::string::npos) value = ln.substr(split_idx + 1);
+#endif
+    if (ln.size() >= Key.size() && ln.compare(0, Key.size(), Key) == 0) {
+      num_cpus++;
+      if (!value.empty()) {
+        const int cur_id = benchmark::stoi(value);
+        max_id = std::max(cur_id, max_id);
+      }
+    }
+  }
+  if (f.bad()) {
+    PrintErrorAndDie("Failure reading /proc/cpuinfo");
+  }
+  if (!f.eof()) {
+    PrintErrorAndDie("Failed to read to end of /proc/cpuinfo");
+  }
+  f.close();
+
+  if ((max_id + 1) != num_cpus) {
+    fprintf(stderr,
+            "CPU ID assignments in /proc/cpuinfo seem messed up."
+            " This is usually caused by a bad BIOS.\n");
+  }
+  return num_cpus;
 #endif
   BENCHMARK_UNREACHABLE();
 }
@@ -515,9 +572,8 @@ int GetNumCPUsImpl() {
 int GetNumCPUs() {
   int num_cpus = GetNumCPUsImpl();
   if (num_cpus < 1) {
-    std::cerr << "Unable to extract number of CPUs.  If your platform uses "
-                 "/proc/cpuinfo, custom support may need to be added.\n";
-    /* There is at least one CPU which we run on. */
+    std::cerr << "Unable to extract number of CPUs.\n";
+    // There must be at least one CPU on which we're running.
     num_cpus = 1;
   }
   return num_cpus;
