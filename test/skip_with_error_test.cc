@@ -106,7 +106,7 @@ void BM_error_during_running(benchmark::State& state) {
   int first_iter = 1;
   while (state.KeepRunning()) {
     if (state.range(0) == 1 && state.thread_index() <= (state.threads() / 2)) {
-      assert(first_iter);
+      assert(first_iter != 0);
       first_iter = 0;
       state.SkipWithError("error message");
     } else {
