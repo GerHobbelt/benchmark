@@ -4,6 +4,10 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+#define BENCHMARK_FAMILY_ID "templated_fixture_method"
+
 template <typename T>
 class MyFixture : public ::benchmark::Fixture {
  public:
@@ -22,5 +26,9 @@ BENCHMARK_TEMPLATE_METHOD_F(MyFixture, Foo)(benchmark::State& st) {
 
 BENCHMARK_TEMPLATE_INSTANTIATE_F(MyFixture, Foo, int);
 BENCHMARK_TEMPLATE_INSTANTIATE_F(MyFixture, Foo, double);
+
+#if defined(BUILD_MONOLITHIC)
+#define main gbenchmark_templated_fixture_method_test_main
+#endif
 
 BENCHMARK_MAIN();

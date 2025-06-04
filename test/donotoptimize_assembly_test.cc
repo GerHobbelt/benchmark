@@ -225,3 +225,5 @@ extern "C" void test_pointer_lvalue() {
 }
 
 #endif // !defined(DO_DEFINE_EXTERN_VARIABLES)
+
+BENCHMARK_RESTORE_DEPRECATED_WARNING

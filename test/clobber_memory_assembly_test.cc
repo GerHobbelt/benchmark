@@ -63,3 +63,5 @@ extern "C" void test_redundant_read2() {
   // CHECK: movl %eax, [[DEST]]
   // CHECK: ret
 }
+
+BENCHMARK_RESTORE_DEPRECATED_WARNING

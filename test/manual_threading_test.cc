@@ -8,6 +8,10 @@
 #include "../src/timers.h"
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+#define BENCHMARK_FAMILY_ID "manual_threading"
+
 namespace {
 
 const std::chrono::duration<double, std::milli> time_frame(50);
@@ -166,10 +170,15 @@ BENCHMARK(BM_ManualThreading)
 // ---------------------------- TEST CASES END ----------------------------- //
 // ========================================================================= //
 
-int main(int argc, char* argv[]) {
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr) gbenchmark_manual_threading_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   benchmark::MaybeReenterWithoutASLR(argc, argv);
   benchmark::Initialize(&argc, argv);
-  benchmark::RunSpecifiedBenchmarks();
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, false);
   benchmark::Shutdown();
   assert(numRunThreadsCalled_ > 0);
+  return 0;
 }

@@ -5,6 +5,10 @@
 
 #include "benchmark/benchmark.h"
 
+#include "monolithic_examples.h"
+
+#define BENCHMARK_FAMILY_ID "profiler_manager_iterations"
+
 // Tests that we can specify the number of profiler iterations with
 // --benchmark_min_time=<NUM>x.
 namespace {
@@ -23,6 +27,7 @@ class NullReporter : public benchmark::BenchmarkReporter {
  public:
   bool ReportContext(const Context& /*context*/) override { return true; }
   void ReportRuns(const std::vector<Run>& /* report */) override {}
+  void List(const std::vector<benchmark::internal::BenchmarkInstance>&) override {}
 };
 
 }  // end namespace
@@ -34,7 +39,11 @@ static void BM_MyBench(benchmark::State& state) {
 }
 BENCHMARK(BM_MyBench);
 
-int main(int argc, char** argv) {
+#if defined(BUILD_MONOLITHIC)
+#define main(cnt, arr) gbenchmark_profiler_manager_iterations_test_main(cnt, arr)
+#endif
+
+int main(int argc, const char** argv) {
   benchmark::MaybeReenterWithoutASLR(argc, argv);
   // Make a fake argv and append the new --benchmark_profiler_iterations=<foo>
   // to it.
@@ -48,11 +57,11 @@ int main(int argc, char** argv) {
   std::unique_ptr<benchmark::ProfilerManager> pm(new TestProfilerManager());
   benchmark::RegisterProfilerManager(pm.get());
 
-  benchmark::Initialize(&fake_argc, const_cast<char**>(fake_argv.data()));
+  benchmark::Initialize(&fake_argc, fake_argv.data());
 
   NullReporter null_reporter;
   const size_t returned_count =
-      benchmark::RunSpecifiedBenchmarks(&null_reporter, "BM_MyBench");
+      benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter, "BM_MyBench");
   assert(returned_count == 1);
 
   // Check the executed iters.

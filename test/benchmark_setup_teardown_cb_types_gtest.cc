@@ -1,6 +1,8 @@
 #include "benchmark/benchmark.h"
 #include "gtest/gtest.h"
 
+#define BENCHMARK_FAMILY_ID "setup_teardown_cb_types"
+
 using benchmark::BenchmarkReporter;
 using benchmark::callback_function;
 using benchmark::ClearRegisteredBenchmarks;
@@ -18,6 +20,7 @@ class NullReporter : public BenchmarkReporter {
  public:
   bool ReportContext(const Context& /*context*/) override { return true; }
   void ReportRuns(const std::vector<Run>& /* report */) override {}
+  void List(const std::vector<benchmark::internal::BenchmarkInstance>&) override {}
 };
 
 class BenchmarkTest : public testing::Test {
@@ -33,14 +36,16 @@ class BenchmarkTest : public testing::Test {
     teardown_calls = 0;
     functor_called = 0;
 
-    bm = RegisterBenchmark("BM", [](State& st) {
+    bm = RegisterBenchmark(BENCHMARK_FAMILY_ID, "BM", [](State& st) {
       for (auto _ : st) {
       }
     });
     bm->Iterations(1);
   }
 
-  void TearDown() override { ClearRegisteredBenchmarks(); }
+  void TearDown() override {
+	  ClearRegisteredBenchmarks(BENCHMARK_FAMILY_ID);
+  }
 };
 
 // Test that Setup/Teardown can correctly take a lambda expressions
@@ -49,7 +54,7 @@ TEST_F(BenchmarkTest, LambdaTestCopy) {
   auto teardown_lambda = [this](const State&) { teardown_calls++; };
   bm->Setup(setup_lambda);
   bm->Teardown(teardown_lambda);
-  RunSpecifiedBenchmarks(&null_reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter);
   EXPECT_EQ(setup_calls, 1);
   EXPECT_EQ(teardown_calls, 1);
 }
@@ -60,7 +65,7 @@ TEST_F(BenchmarkTest, LambdaTestMove) {
   auto teardown_lambda = [this](const State&) { teardown_calls++; };
   bm->Setup(std::move(setup_lambda));
   bm->Teardown(std::move(teardown_lambda));
-  RunSpecifiedBenchmarks(&null_reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter);
   EXPECT_EQ(setup_calls, 1);
   EXPECT_EQ(teardown_calls, 1);
 }
@@ -73,7 +78,7 @@ TEST_F(BenchmarkTest, CallbackFunctionCopy) {
   };
   bm->Setup(setup_lambda);
   bm->Teardown(teardown_lambda);
-  RunSpecifiedBenchmarks(&null_reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter);
   EXPECT_EQ(setup_calls, 1);
   EXPECT_EQ(teardown_calls, 1);
 }
@@ -86,7 +91,7 @@ TEST_F(BenchmarkTest, CallbackFunctionMove) {
   };
   bm->Setup(std::move(setup_lambda));
   bm->Teardown(std::move(teardown_lambda));
-  RunSpecifiedBenchmarks(&null_reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter);
   EXPECT_EQ(setup_calls, 1);
   EXPECT_EQ(teardown_calls, 1);
 }
@@ -96,7 +101,7 @@ TEST_F(BenchmarkTest, FunctorCopy) {
   Functor func;
   bm->Setup(func);
   bm->Teardown(func);
-  RunSpecifiedBenchmarks(&null_reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter);
   EXPECT_EQ(functor_called, 2);
 }
 
@@ -106,7 +111,7 @@ TEST_F(BenchmarkTest, FunctorMove) {
   Functor func2;
   bm->Setup(std::move(func1));
   bm->Teardown(std::move(func2));
-  RunSpecifiedBenchmarks(&null_reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &null_reporter);
   EXPECT_EQ(functor_called, 2);
 }
 

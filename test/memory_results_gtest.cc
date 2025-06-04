@@ -3,6 +3,8 @@
 #include "benchmark/benchmark.h"
 #include "gtest/gtest.h"
 
+#define BENCHMARK_FAMILY_ID "memory_results"
+
 namespace {
 
 using benchmark::ClearRegisteredBenchmarks;
@@ -66,7 +68,7 @@ class MemoryResultsTest : public testing::Test {
   TestReporter reporter;
 
   void SetUp() override {
-    bm = RegisterBenchmark("BM", [](State& st) {
+    bm = RegisterBenchmark(BENCHMARK_FAMILY_ID, "BM", [](State& st) {
       for (auto _ : st) {
       }
     });
@@ -74,11 +76,13 @@ class MemoryResultsTest : public testing::Test {
     bm->Iterations(N_ITERATIONS);
     reset();
   }
-  void TearDown() override { ClearRegisteredBenchmarks(); }
+  void TearDown() override {
+	  ClearRegisteredBenchmarks(BENCHMARK_FAMILY_ID);
+  }
 };
 
 TEST_F(MemoryResultsTest, NoMMTest) {
-  RunSpecifiedBenchmarks(&reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &reporter);
   EXPECT_EQ(reporter.store.size(), 0);
 }
 
@@ -86,7 +90,7 @@ TEST_F(MemoryResultsTest, ResultsTest) {
   auto mm = std::make_unique<TestMemoryManager>();
   RegisterMemoryManager(mm.get());
 
-  RunSpecifiedBenchmarks(&reporter);
+  RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, &reporter);
   EXPECT_EQ(reporter.store.size(), N_REPETITIONS);
 
   for (size_t i = 0; i < reporter.store.size(); i++) {

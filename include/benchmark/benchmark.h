@@ -350,7 +350,7 @@ using callback_function = std::function<void(const benchmark::State&)>;
 // Default number of minimum benchmark running time in seconds.
 const char kDefaultMinTimeStr[] = "0.5s";
 
-BENCHMARK_EXPORT void MaybeReenterWithoutASLR(int, char**);
+BENCHMARK_EXPORT void MaybeReenterWithoutASLR(int argc, const char** argv);
 
 // Returns the version of the library.
 BENCHMARK_EXPORT std::string GetBenchmarkVersion();
@@ -1713,6 +1713,7 @@ class Fixture : public internal::Benchmark {
   };                                                                          \
   BENCHMARK_PRIVATE_DECLARE(BaseClass##_##Method##_Benchmark) =               \
       (::benchmark::internal::RegisterBenchmarkInternal(                      \
+          BENCHMARK_FAMILY_ID,                                                \
           ::benchmark::internal::make_unique<UniqueName>()))
 
 #define BENCHMARK_TEMPLATE_INSTANTIATE_F(BaseClass, Method, ...)    \

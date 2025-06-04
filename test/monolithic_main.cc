@@ -55,7 +55,6 @@ MONOLITHIC_CMD_TABLE_START()
 	{ "basic", {.fa = gbenchmark_basic_test_main } },
 	{ "bench", {.fa = gbenchmark_bench_test_main } },
 	{ "complexity", {.fa = gbenchmark_complexity_test_main } },
-	{ "cxx03", {.fa = gbenchmark_cxx03_test_main } },
 	{ "diagnostics", {.fa = gbenchmark_diagnostics_test_main } },
 	{ "display_aggregates_only", {.fa = gbenchmark_display_aggregates_only_test_main } },
 	{ "do_not_optimize", {.fa = gbenchmark_do_not_optimize_test_main } },
@@ -83,6 +82,9 @@ MONOLITHIC_CMD_TABLE_START()
 	{ "user_counters_thousands", {.fa = gbenchmark_user_counters_thousands_test_main } },
 	{ "spec_arg_verbosity", {.fa = gbenchmark_spec_arg_verbosity_test_main } },
 	{ "min_rel_accuracy_flag", {.fa = gbenchmark_min_rel_accuracy_flag_test_main } },
+	{ "manual_threading", {.fa = gbenchmark_manual_threading_test_main } },
+	{ "profiler_manager_iterations", {.fa = gbenchmark_profiler_manager_iterations_test_main } },
+	{ "templated_fixture_method", {.fa = gbenchmark_templated_fixture_method_test_main } },
 
 	{ "gbenchmark", {.fa = gbenchmark_main } },
 MONOLITHIC_CMD_TABLE_END();

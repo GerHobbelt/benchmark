@@ -8,7 +8,6 @@
 
 #include "monolithic_examples.h"
 
-
 #define BENCHMARK_FAMILY_ID "register_benchmark_tests"
 
 namespace {

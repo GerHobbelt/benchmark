@@ -11,7 +11,6 @@ extern "C" {
 	int gbenchmark_basic_test_main(int argc, const char** argv);
 	int gbenchmark_bench_test_main(int argc, const char** argv);
 	int gbenchmark_complexity_test_main(int argc, const char** argv);
-	int gbenchmark_cxx03_test_main(int argc, const char** argv);
 	int gbenchmark_setup_teardown_test_main(int argc, const char** argv);
 	int gbenchmark_diagnostics_test_main(int argc, const char** argv);
 	int gbenchmark_display_aggregates_only_test_main(int argc, const char** argv);
@@ -39,6 +38,9 @@ extern "C" {
 	int gbenchmark_user_counters_thousands_test_main(int argc, const char** argv);
 	int gbenchmark_spec_arg_verbosity_test_main(int argc, const char** argv);
 	int gbenchmark_min_rel_accuracy_flag_test_main(int argc, const char** argv);
+	int gbenchmark_manual_threading_test_main(int argc, const char** argv);
+	int gbenchmark_profiler_manager_iterations_test_main(int argc, const char** argv);
+	int gbenchmark_templated_fixture_method_test_main(int argc, const char** argv);
 
 	int gbenchmark_main(int argc, const char** argv);
 
