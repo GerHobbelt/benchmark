@@ -21,7 +21,8 @@ class TestMemoryManager : public benchmark::MemoryManager {
 
 static void BM_empty(benchmark::State& state) {
   for (auto _ : state) {
-    auto iterations = double(state.iterations()) * double(state.iterations());
+    auto iterations = static_cast<double>(state.iterations()) *
+                      static_cast<double>(state.iterations());
     benchmark::DoNotOptimize(iterations);
   }
 }
@@ -56,6 +57,7 @@ using namespace gbench_mm_test;
 
 extern "C"
 int main(int argc, const char** argv) {
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
   std::unique_ptr<benchmark::MemoryManager> mm(new TestMemoryManager());
 
   benchmark::RegisterMemoryManager(mm.get());

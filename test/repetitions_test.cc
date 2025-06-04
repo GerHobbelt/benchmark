@@ -227,6 +227,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_ImplicitRepetitions_stddev\",%csv_report$"}});
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
-	return 0;
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
+  return 0;
 }

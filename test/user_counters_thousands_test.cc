@@ -173,8 +173,9 @@ ADD_CASES(
 // VS2013 does not allow this function to be passed as a lambda argument
 // to CHECK_BENCHMARK_RESULTS()
 void CheckThousands(Results const& e) {
-  if (e.name != "BM_Counters_Thousands/repeats:2")
+  if (e.name != "BM_Counters_Thousands/repeats:2") {
     return;  // Do not check the aggregates!
+  }
 
   // check that the values are within 0.01% of the expected values
   CHECK_FLOAT_COUNTER_VALUE(e, "t0_1000000DefaultBase", EQ, 1000 * 1000,
@@ -199,6 +200,7 @@ CHECK_BENCHMARK_RESULTS("BM_Counters_Thousands", &CheckThousands);
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
-	return 0;
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
+  return 0;
 }

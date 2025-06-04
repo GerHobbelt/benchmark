@@ -50,6 +50,7 @@ ADD_CASES(TC_CSVOut, {{"^\"BM_empty\",%csv_report$"}});
 
 extern "C"
 int main(int argc, const char** argv) {
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
   std::unique_ptr<TestProfilerManager> pm(new TestProfilerManager());
 
   benchmark::RegisterProfilerManager(pm.get());

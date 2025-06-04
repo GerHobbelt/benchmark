@@ -16,7 +16,7 @@
 namespace {
 
 #define ADD_COMPLEXITY_CASES(...) \
-  int CONCAT(dummy, __LINE__) = AddComplexityTest(__VA_ARGS__)
+  const int CONCAT(dummy, __LINE__) = AddComplexityTest(__VA_ARGS__)
 
 static int AddComplexityTest(const std::string &test_name,
                       const std::string &big_o_test_name,
@@ -99,11 +99,11 @@ BENCHMARK(BM_Complexity_O1)
     ->UseManualTime()
     ->Complexity([](benchmark::IterationCount) { return 1.0; });
 
-static const char *one_test_name = "BM_Complexity_O1/manual_time";
-static const char *big_o_1_test_name = "BM_Complexity_O1/manual_time_BigO";
-static const char *rms_o_1_test_name = "BM_Complexity_O1/manual_time_RMS";
-static const char *enum_auto_big_o_1 = "\\([0-9]+\\)";
-static const char *lambda_big_o_1 = "f\\(N\\)";
+constexpr char one_test_name[] = "BM_Complexity_O1/manual_time";
+constexpr char big_o_1_test_name[] = "BM_Complexity_O1/manual_time_BigO";
+constexpr char rms_o_1_test_name[] = "BM_Complexity_O1/manual_time_RMS";
+constexpr char enum_auto_big_o_1[] = "\\([0-9]+\\)";
+constexpr char lambda_big_o_1[] = "f\\(N\\)";
 
 // Add enum tests
 ADD_COMPLEXITY_CASES(one_test_name, big_o_1_test_name, rms_o_1_test_name,
@@ -156,11 +156,11 @@ BENCHMARK(BM_Complexity_O_N)
       return static_cast<double>(n);
     });
 
-static const char *n_test_name = "BM_Complexity_O_N/manual_time";
-static const char *big_o_n_test_name = "BM_Complexity_O_N/manual_time_BigO";
-static const char *rms_o_n_test_name = "BM_Complexity_O_N/manual_time_RMS";
-static const char *enum_auto_big_o_n = "N";
-static const char *lambda_big_o_n = "f\\(N\\)";
+constexpr char n_test_name[] = "BM_Complexity_O_N/manual_time";
+constexpr char big_o_n_test_name[] = "BM_Complexity_O_N/manual_time_BigO";
+constexpr char rms_o_n_test_name[] = "BM_Complexity_O_N/manual_time_RMS";
+constexpr char enum_auto_big_o_n[] = "N";
+constexpr char lambda_big_o_n[] = "f\\(N\\)";
 
 // Add enum tests
 ADD_COMPLEXITY_CASES(n_test_name, big_o_n_test_name, rms_o_n_test_name,
@@ -214,11 +214,13 @@ BENCHMARK(BM_Complexity_O_N_log_N)
       return kLog2E * static_cast<double>(n) * std::log(static_cast<double>(n));
     });
 
-static const char *n_lg_n_test_name = "BM_Complexity_O_N_log_N/manual_time";
-static const char *big_o_n_lg_n_test_name = "BM_Complexity_O_N_log_N/manual_time_BigO";
-static const char *rms_o_n_lg_n_test_name = "BM_Complexity_O_N_log_N/manual_time_RMS";
-static const char *enum_auto_big_o_n_lg_n = "NlgN";
-static const char *lambda_big_o_n_lg_n = "f\\(N\\)";
+constexpr char n_lg_n_test_name[] = "BM_Complexity_O_N_log_N/manual_time";
+constexpr char big_o_n_lg_n_test_name[] =
+    "BM_Complexity_O_N_log_N/manual_time_BigO";
+constexpr char rms_o_n_lg_n_test_name[] =
+    "BM_Complexity_O_N_log_N/manual_time_RMS";
+constexpr char enum_auto_big_o_n_lg_n[] = "NlgN";
+constexpr char lambda_big_o_n_lg_n[] = "f\\(N\\)";
 
 // Add enum tests
 ADD_COMPLEXITY_CASES(n_lg_n_test_name, big_o_n_lg_n_test_name,
@@ -280,6 +282,7 @@ ADD_COMPLEXITY_CASES(complexity_capture_name, complexity_capture_name + "_BigO",
 
 extern "C"
 int main(int argc, const char** argv) {
-    RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
-    return 0;
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
+  return 0;
 }

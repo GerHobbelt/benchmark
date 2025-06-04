@@ -32,6 +32,7 @@ BENCHMARK(BM_SummaryRepeat)->Repetitions(3)->ReportAggregatesOnly();
 
 extern "C"
 int main(int argc, const char** argv) {
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
   const std::string output = GetFileReporterOutput(BENCHMARK_FAMILY_ID, argc, argv);
 
   if (SubstrCnt(output, "\"name\": \"BM_SummaryRepeat/repeats:3") != 4 ||

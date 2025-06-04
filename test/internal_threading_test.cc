@@ -27,8 +27,9 @@ void MyBusySpinwait() {
     const auto elapsed = now - start;
 
     if (std::chrono::duration<double, std::chrono::seconds::period>(elapsed) >=
-        time_frame)
+        time_frame) {
       return;
+    }
   }
 }
 
@@ -195,6 +196,8 @@ BENCHMARK(BM_MainThreadAndWorkerThread)
 
 extern "C"
 int main(int argc, const char** argv) {
-	RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
-	return 0;
+  benchmark::MaybeReenterWithoutASLR(argc, argv);
+
+  RunOutputTests(BENCHMARK_FAMILY_ID, argc, argv);
+  return 0;
 }
