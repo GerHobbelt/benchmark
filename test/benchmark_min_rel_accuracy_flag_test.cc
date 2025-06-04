@@ -18,11 +18,11 @@ namespace {
 
 class TestReporter : public benchmark::ConsoleReporter {
  public:
-  virtual bool ReportContext(const Context& context) BENCHMARK_OVERRIDE {
+  virtual bool ReportContext(const Context& context) override {
     return ConsoleReporter::ReportContext(context);
   };
 
-  virtual void ReportRuns(const std::vector<Run>& report) BENCHMARK_OVERRIDE {
+  virtual void ReportRuns(const std::vector<Run>& report) override {
     assert(report.size() == 1);
     iters_.push_back(report[0].iterations);
     real_accumulated_times_.push_back(report[0].real_accumulated_time);
@@ -70,8 +70,7 @@ BENCHMARK(BM_MyBench)->UseManualTime();
 #endif
 
 extern "C"
-int main(int argc, const char** argv)
-{
+int main(int argc, const char** argv) {
   // Make a fake argv and append the new
   // --benchmark_min_rel_accuracy=<min_rel_accuracy> to it.
   int fake_argc = argc + 2;
@@ -80,6 +79,8 @@ int main(int argc, const char** argv)
   fake_argv[argc] = "--benchmark_min_time=10s";
   fake_argv[argc + 1] = "--benchmark_min_rel_accuracy=0.01";
 
+  benchmark::MaybeReenterWithoutASLR(fake_argc, fake_argv);
+  
   benchmark::Initialize(&fake_argc, fake_argv);
 
   TestReporter test_reporter;
