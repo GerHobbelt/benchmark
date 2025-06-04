@@ -356,7 +356,7 @@ void Report(BenchmarkReporter* display_reporter,
             BenchmarkReporter* file_reporter, const RunResults& run_results) {
   auto report_one = [](BenchmarkReporter* reporter, bool aggregates_only,
                        const RunResults& results) {
-    assert(reporter);
+    assert(reporter != nullptr);
     // If there are no aggregates, do output non-aggregates.
     aggregates_only &= !results.aggregates_only.empty();
     if (!aggregates_only) reporter->ReportRuns(results.non_aggregates);

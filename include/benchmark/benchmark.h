@@ -2012,14 +2012,14 @@ class BENCHMARK_EXPORT BenchmarkReporter {
   // REQUIRES: The object referenced by 'out' is valid for the lifetime
   // of the reporter.
   void SetOutputStream(std::ostream* out) {
-    assert(out);
+    assert(out != nullptr);
     output_stream_ = out;
   }
 
   // REQUIRES: The object referenced by 'err' is valid for the lifetime
   // of the reporter.
   void SetErrorStream(std::ostream* err) {
-    assert(err);
+    assert(err != nullptr);
     error_stream_ = err;
   }
 
