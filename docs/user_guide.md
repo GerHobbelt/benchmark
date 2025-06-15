@@ -1296,7 +1296,7 @@ int main(int argc, char** argv) {
 		  BM_test, test_input
 	  );
   benchmark::Initialize(&argc, argv);
-  benchmark::RunSpecifiedBenchmarks(BENCHMARK__FAMILY_ID);
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK__FAMILY_ID, false);
   benchmark::Shutdown();
 }
 ```

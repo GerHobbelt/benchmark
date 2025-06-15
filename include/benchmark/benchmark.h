@@ -42,7 +42,7 @@ BENCHMARK(BM_StringCopy);
 int main(int argc, const char** argv) {
   benchmark::MaybeReenterWithoutASLR(argc, argv);
   benchmark::Initialize(&argc, argv);
-  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID);
+  benchmark::RunSpecifiedBenchmarks(BENCHMARK_FAMILY_ID, false);
   benchmark::Shutdown();
   return 0;
 }
