@@ -283,10 +283,10 @@ BenchmarkRunner::BenchmarkRunner(
                    ? 0
                    : ComputeMinTime(b_, parsed_benchtime_flag)),
       min_rel_accuracy(FLAGS_benchmark_dry_run
-                   ? std::numeric_limits<double>::max()
-                   : (!IsZero(b.min_rel_accuracy())
-                           ? b.min_rel_accuracy()
-                           : FLAGS_benchmark_min_rel_accuracy)),
+                           ? std::numeric_limits<double>::max()
+                           : (!IsZero(b.min_rel_accuracy())
+                                  ? b.min_rel_accuracy()
+                                  : FLAGS_benchmark_min_rel_accuracy)),
       min_warmup_time(
           FLAGS_benchmark_dry_run
               ? 0
@@ -421,7 +421,9 @@ double BenchmarkRunner::GetMinTimeToApply() const {
 }
 
 double BenchmarkRunner::GetRelAccuracy(const IterationResults& i) const {
-  return std::sqrt(i.seconds_pow2 - std::pow(i.seconds, 2.) / static_cast<double>(i.iters)) / i.seconds;
+  return std::sqrt(i.seconds_pow2 -
+                   std::pow(i.seconds, 2.) / static_cast<double>(i.iters)) /
+         i.seconds;
 }
 
 bool BenchmarkRunner::HasSufficientTimeToApply(
@@ -429,7 +431,7 @@ bool BenchmarkRunner::HasSufficientTimeToApply(
   return i.seconds >= GetMinTimeToApply() ||
          // CPU time is specified but the elapsed real time greatly exceeds
          // the minimum time.
-         // Note that user provided timers are exempt from this test.
+         // Note that user provided timers are except from this test.
          (!b.use_manual_time() &&
           i.results.real_time_used >= 5 * GetMinTimeToApply());
 }
@@ -437,7 +439,7 @@ bool BenchmarkRunner::HasSufficientTimeToApply(
 bool BenchmarkRunner::HasSufficientRelAccuracy(
     const IterationResults& i) const {
   return (IsZero(GetMinRelAccuracy()) ||
-          (GetRelAccuracy(i) <= GetMinRelAccuracy()));
+          ((GetRelAccuracy(i) <= GetMinRelAccuracy()) && (i.iters >= 2)));
 }
 
 void BenchmarkRunner::FinishWarmUp(const IterationCount& i) {
