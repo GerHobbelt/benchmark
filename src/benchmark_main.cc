@@ -26,6 +26,7 @@
 #define main(cnt, arr)      gbenchmark_main(cnt, arr)
 #endif
 
+extern "C"
 BENCHMARK_EXPORT int main(int, const char**);
 
 BENCHMARK_MAIN();

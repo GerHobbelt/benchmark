@@ -1746,7 +1746,7 @@ class Fixture : public internal::Benchmark {
 // Note the workaround for Hexagon simulator passing argc != 0, argv = NULL.
 #define BENCHMARK_MAIN()                                                \
   extern "C"                                                            \
-  int main(int argc, const char** argv) {                               \
+  BENCHMARK_EXPORT int main(int argc, const char** argv) {              \
     benchmark::MaybeReenterWithoutASLR(argc, argv);                     \
     const char arg0_default[] = "benchmark";                            \
     const char* args_default = arg0_default;                            \
@@ -1761,7 +1761,7 @@ class Fixture : public internal::Benchmark {
     return 0;                                                           \
   }                                                                     \
   extern "C"                                                            \
-  int main(int, const char**)
+  BENCHMARK_EXPORT int main(int, const char**)
 
 // ------------------------------------------------------
 // Benchmark Reporters
